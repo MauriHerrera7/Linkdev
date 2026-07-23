@@ -142,13 +142,14 @@ export default function OnboardingPage() {
                 <div className="flex flex-wrap gap-2">
                   {TECH_OPTIONS.map((tech) => (
                     <button
+                      type="button"
                       key={tech}
                       onClick={() => toggleTech(tech)}
                       className={cn(
-                        "rounded-lg border px-3 py-1.5 text-sm transition-all",
+                        "rounded-lg border border-border bg-card px-3 py-1.5 text-sm font-medium text-[var(--text)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] dark:bg-white/5 dark:text-[var(--text)]",
                         data.technologies.includes(tech)
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border hover:border-primary/50"
+                          ? "border-[var(--brand-900)] bg-[var(--brand-100)] text-[var(--brand-900)] shadow-sm dark:border-[var(--brand-300)] dark:bg-white/10 dark:text-white"
+                          : "hover:border-[var(--brand-900)] hover:bg-[var(--brand-100)] hover:text-[var(--brand-900)] dark:hover:border-[var(--brand-300)] dark:hover:bg-white/10"
                       )}
                     >
                       {data.technologies.includes(tech) && <Check className="mr-1 inline h-3 w-3" />}
@@ -166,13 +167,14 @@ export default function OnboardingPage() {
                 <div className="space-y-3">
                   {GOALS.map((g) => (
                     <button
+                      type="button"
                       key={g.value}
                       onClick={() => setData({ ...data, goal: g.value })}
                       className={cn(
-                        "w-full rounded-xl border p-4 text-left transition-all",
+                        "w-full rounded-xl border border-border bg-card p-4 text-left text-[var(--text)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] dark:bg-[var(--surface)]",
                         data.goal === g.value
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:border-primary/30"
+                          ? "border-[var(--brand-900)] bg-[var(--brand-100)] text-[var(--brand-900)] shadow-sm dark:border-[var(--brand-300)] dark:bg-white/10 dark:text-white"
+                          : "hover:border-[var(--brand-900)] hover:bg-[var(--brand-100)] hover:text-[var(--brand-900)] dark:hover:border-[var(--brand-300)] dark:hover:bg-white/10"
                       )}
                     >
                       <p className="font-medium">{g.label}</p>
@@ -190,13 +192,14 @@ export default function OnboardingPage() {
                 <div className="space-y-3">
                   {TONES.map((t) => (
                     <button
+                      type="button"
                       key={t.value}
                       onClick={() => setData({ ...data, tone: t.value })}
                       className={cn(
-                        "w-full rounded-xl border p-4 text-left transition-all",
+                        "w-full rounded-xl border border-border bg-card p-4 text-left text-[var(--text)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] dark:bg-[var(--surface)]",
                         data.tone === t.value
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:border-primary/30"
+                          ? "border-[var(--brand-900)] bg-[var(--brand-100)] text-[var(--brand-900)] shadow-sm dark:border-[var(--brand-300)] dark:bg-white/10 dark:text-white"
+                          : "hover:border-[var(--brand-900)] hover:bg-[var(--brand-100)] hover:text-[var(--brand-900)] dark:hover:border-[var(--brand-300)] dark:hover:bg-white/10"
                       )}
                     >
                       <p className="font-medium">{t.label}</p>

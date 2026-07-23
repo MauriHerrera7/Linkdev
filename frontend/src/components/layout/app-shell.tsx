@@ -16,7 +16,7 @@ export function AppShell({ children, title, description }: AppShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen min-h-screen overflow-hidden bg-background">
       {/* Desktop sidebar */}
       <div className="hidden lg:block">
         <Sidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
@@ -26,7 +26,7 @@ export function AppShell({ children, title, description }: AppShellProps) {
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
-          <div className="relative z-10 h-full w-64">
+          <div className="relative z-10 h-full w-full max-w-xs">
             <Sidebar />
           </div>
         </div>
@@ -34,7 +34,7 @@ export function AppShell({ children, title, description }: AppShellProps) {
 
       <div className="flex flex-1 flex-col overflow-hidden bg-background">
         <AppHeader title={title} description={description} onMenuClick={() => setMobileOpen(true)} />
-        <main className={cn("flex-1 overflow-y-auto p-4 lg:p-6")}>{children}</main>
+        <main className={cn("flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6")}>{children}</main>
       </div>
     </div>
   );

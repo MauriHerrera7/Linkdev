@@ -93,7 +93,7 @@ export default function GeneratePage() {
   }
 
   return (
-    <AppShell title="Generar publicación" description="Creá contenido con IA en segundos">
+    <AppShell title="Generar publicación">
       <div className="grid gap-6 lg:grid-cols-5">
         {/* Left panel - Input & Controls */}
         <div className="space-y-6 lg:col-span-3">
@@ -106,14 +106,16 @@ export default function GeneratePage() {
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
                 {MODES.map((m) => (
                   <button
+                    type="button"
                     key={m.id}
                     onClick={() => setMode(m.id)}
                     className={cn(
-                      "flex flex-col items-center gap-2 rounded-lg border p-3 text-center text-xs transition-all",
+                      "flex flex-col items-center gap-2 rounded-lg border border-border bg-card p-3 text-center text-xs font-medium text-[var(--text)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] dark:bg-[var(--surface)] dark:text-[var(--text)]",
                       mode === m.id
-                        ? "border-primary bg-primary/5 text-primary"
-                        : "border-border hover:border-primary/30"
+                        ? "border-[var(--brand-900)] bg-[var(--brand-100)] text-[var(--brand-900)] shadow-sm dark:border-[var(--brand-300)] dark:bg-white/10 dark:text-white"
+                        : "hover:border-[var(--brand-900)] hover:bg-[var(--brand-100)] hover:text-[var(--brand-900)] dark:hover:border-[var(--brand-300)] dark:hover:bg-white/10"
                     )}
+                    aria-pressed={mode === m.id}
                   >
                     <m.icon className="h-5 w-5" />
                     {m.label}

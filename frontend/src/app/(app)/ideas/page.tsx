@@ -6,6 +6,7 @@ import { Bookmark, Lightbulb, Search, Sparkles } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,7 +14,6 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { CATEGORY_LABELS, mockIdeas } from "@/lib/mock-data";
 import type { IdeaCategory } from "@/lib/types";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 
 const CATEGORIES: (IdeaCategory | "all")[] = [
   "all", "backend", "frontend", "ai", "productivity", "career",
@@ -41,7 +41,7 @@ export default function IdeasPage() {
   }
 
   return (
-    <AppShell title="Banco de Ideas" description="Nunca te quedes sin contenido">
+    <AppShell title="Banco de Ideas">
       <div className="space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative max-w-sm flex-1">
@@ -60,10 +60,9 @@ export default function IdeasPage() {
         </div>
 
         <Tabs value={category} onValueChange={(v) => setCategory(v as IdeaCategory | "all")}>
-          <TabsList className="h-auto flex-wrap">
+          <TabsList className="h-auto flex flex-nowrap gap-2 overflow-x-auto pb-2 pr-2 sm:flex-wrap sm:overflow-visible sm:pb-0 sm:pr-0">
             {CATEGORIES.map((cat) => (
-              <TabsTrigger key={cat} value={cat} className="text-xs">
-                {cat === "all" ? "Todas" : CATEGORY_LABELS[cat]}
+              <TabsTrigger key={cat} value={cat} className="text-xs min-w-max">
               </TabsTrigger>
             ))}
           </TabsList>
@@ -89,15 +88,13 @@ export default function IdeasPage() {
                   <CardContent className="flex h-full flex-col p-5">
                     <div className="mb-3 flex items-start justify-between">
                       <Badge variant="secondary">{CATEGORY_LABELS[idea.category]}</Badge>
-                      <button
+                      <IconButton
+                        icon={Bookmark}
+                        active={idea.is_saved}
+                        label={idea.is_saved ? "Quitar de guardadas" : "Guardar idea"}
                         onClick={() => toggleSave(idea.id)}
-                        className={cn(
-                          "rounded-md p-1 transition-colors",
-                          idea.is_saved ? "text-primary" : "text-muted-foreground hover:text-primary"
-                        )}
-                      >
-                        <Bookmark className={cn("h-4 w-4", idea.is_saved && "fill-current")} />
-                      </button>
+                        className="h-9 w-9"
+                      />
                     </div>
                     <h3 className="mb-2 font-semibold group-hover:text-primary">{idea.title}</h3>
                     <p className="mb-4 flex-1 text-sm text-muted-foreground">{idea.description}</p>

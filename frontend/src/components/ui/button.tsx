@@ -9,14 +9,18 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-[var(--brand-600)] text-[var(--brand-100)] shadow-sm shadow-[rgba(51,102,255,0.15)] hover:bg-[var(--brand-500)] active:scale-[0.98]",
-        destructive: "bg-[var(--destructive)] text-[var(--destructive-foreground)] hover:bg-[#d72a46]",
-        outline: "border border-[var(--brand-600)] bg-[var(--card)] text-[var(--brand-600)] hover:bg-[var(--brand-100)]",
-        secondary: "bg-[var(--brand-300)] text-[var(--brand-900)] hover:bg-[var(--brand-100)]",
-        ghost: "bg-transparent text-[var(--brand-900)] hover:bg-[var(--brand-100)]",
-        link: "text-[var(--brand-600)] underline-offset-4 hover:underline",
+        default:
+          "bg-[var(--brand-900)] text-white shadow-sm shadow-[rgba(10,60,110,0.18)] hover:bg-[var(--brand-600)] active:scale-[0.98]",
+        destructive: "bg-[var(--destructive)] text-white hover:bg-[#e11d48]",
+        outline:
+          "border border-black bg-white text-black shadow-sm shadow-[rgba(15,23,42,0.06)] hover:border-[var(--brand-600)] hover:bg-[var(--brand-100)] hover:text-black dark:border-[var(--brand-300)] dark:bg-transparent dark:text-[var(--brand-100)] dark:hover:bg-white/10",
+        secondary:
+          "bg-[var(--brand-100)] text-[var(--brand-900)] hover:bg-[var(--brand-300)] dark:bg-white/10 dark:text-white dark:hover:bg-white/15",
+        ghost:
+          "bg-transparent text-[var(--brand-900)] hover:bg-[var(--brand-100)] hover:text-[var(--brand-900)] dark:text-[var(--text)] dark:hover:bg-white/10",
+        link: "text-[var(--brand-900)] underline-offset-4 hover:text-[var(--brand-600)] hover:underline dark:text-[var(--brand-100)] dark:hover:text-white",
         gradient:
-          "bg-[var(--brand-600)] text-[var(--brand-100)] shadow-lg shadow-[rgba(51,102,255,0.25)] hover:bg-[var(--brand-500)] active:scale-[0.98]",
+          "bg-gradient-to-r from-[var(--brand-900)] to-[var(--brand-600)] text-white shadow-lg shadow-[rgba(10,60,110,0.22)] hover:from-[var(--brand-600)] hover:to-[var(--brand-500)] active:scale-[0.98]",
       },
       size: {
         default: "h-11 px-5",

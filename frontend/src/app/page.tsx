@@ -98,7 +98,7 @@ export default function LandingPage() {
               <Link href="/login">Iniciar sesión</Link>
             </Button>
             <Button variant="gradient" asChild>
-              <Link href="/register">Empezar gratis</Link>
+              <Link href="/register">Empezá gratis</Link>
             </Button>
           </div>
         </div>
@@ -127,7 +127,7 @@ export default function LandingPage() {
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button variant="gradient" size="lg" asChild>
                 <Link href="/register">
-                  Empezar gratis
+                  Empezá gratis
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>

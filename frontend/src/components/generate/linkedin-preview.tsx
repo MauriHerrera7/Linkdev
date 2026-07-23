@@ -1,6 +1,7 @@
 "use client";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { mockUser } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
@@ -46,9 +47,13 @@ export function LinkedInPreview({ content, className }: LinkedInPreviewProps) {
             </p>
           )}
           {content.length > 300 && (
-            <button className="mt-1 text-sm font-medium text-muted-foreground hover:text-primary">
+            <Button
+              type="button"
+              variant="link"
+              className="mt-1 h-auto p-0 text-sm font-semibold text-[var(--brand-900)] hover:text-[var(--brand-600)] dark:text-[var(--brand-100)] dark:hover:text-white"
+            >
               ...ver más
-            </button>
+            </Button>
           )}
         </div>
 

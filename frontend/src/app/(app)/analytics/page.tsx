@@ -73,7 +73,7 @@ export default function AnalyticsPage() {
   const topPosts = mockAnalytics.top_posts.slice(0, 3);
 
   return (
-    <AppShell title="Analytics" description="Entendé qué funciona y por qué">
+    <AppShell title="Analytics">
       <div className="space-y-6">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <StatCard

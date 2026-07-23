@@ -24,19 +24,20 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]["id"]>("profile");
 
   return (
-    <AppShell title="Configuración" description="Ajustá tu experiencia y preferencias">
+    <AppShell title="Configuración">
       <div className="space-y-6">
         <div className="flex flex-wrap gap-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
+                type="button"
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition-all ${
                   activeTab === tab.id
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border bg-card text-muted-foreground hover:border-primary/30"
+                    ? "border-[var(--brand-900)] bg-[var(--brand-100)] text-[var(--brand-900)] shadow-sm dark:border-[var(--brand-300)] dark:bg-white/10 dark:text-white"
+                    : "border-border bg-card text-[var(--text-secondary)] hover:border-[var(--brand-900)] hover:bg-[var(--brand-100)] hover:text-[var(--brand-900)] dark:bg-[var(--surface)] dark:hover:border-[var(--brand-300)] dark:hover:bg-white/10"
                 }`}
               >
                 <Icon className="h-4 w-4" />

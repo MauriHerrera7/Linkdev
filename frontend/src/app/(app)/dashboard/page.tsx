@@ -57,13 +57,13 @@ function PostCard({ post }: { post: (typeof mockPosts)[number] }) {
   return (
     <article className="overflow-hidden rounded-[2rem] bg-card shadow-lg transition-all duration-200 hover:-translate-y-1">
       <div className="px-6 py-5">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-primary/10 text-primary font-semibold">
               LD
             </div>
-            <div>
-              <p className="text-sm font-semibold text-text">{mockUser.name}</p>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-text">{mockUser.name}</p>
               <p className="text-xs text-text-muted">{statusLabel}</p>
             </div>
           </div>
@@ -104,7 +104,6 @@ export default function DashboardPage() {
   return (
     <AppShell
       title={`Hola, ${mockUser.name.split(" ")[0]} 👋`}
-      description="Tu espacio de contenido profesional con métricas claras y un feed moderno."
     >
       <div className="rounded-[2rem] p-4 lg:p-6">
         <div className="grid gap-6 lg:grid-cols-[minmax(280px,320px)_minmax(0,1.5fr)_minmax(300px,360px)]">

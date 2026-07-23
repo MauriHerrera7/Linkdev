@@ -55,7 +55,7 @@ export default function CalendarPage() {
   }
 
   return (
-    <AppShell title="Calendario de contenido" description="Organizá y programá tus publicaciones">
+    <AppShell title="Calendario de contenido">
       <div className="space-y-6">
         {/* Legend */}
         <div className="flex flex-wrap gap-4">
