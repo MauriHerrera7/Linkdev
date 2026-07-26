@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Bot, KeyRound, Palette, Save, ShieldCheck, UserCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { AlertCircle, Bot, KeyRound, Palette, Save, ShieldCheck, UserCircle } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { mockIntegrations, mockUser } from "@/lib/mock-data";
+import { connectGitHub, connectLinkedIn, getIntegrations } from "@/lib/api/endpoints";
+import type { Integration } from "@/lib/types";
 
 const tabs = [
   { id: "profile", label: "Perfil", icon: UserCircle },
@@ -22,6 +24,11 @@ const tabs = [
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]["id"]>("profile");
+  const [integrations, setIntegrations] = useState<Integration[]>([]);
+
+  useEffect(() => {
+    getIntegrations().then(setIntegrations).catch(() => setIntegrations([]));
+  }, []);
 
   return (
     <AppShell title="Configuración">
@@ -106,7 +113,13 @@ export default function SettingsPage() {
               <CardDescription>Conectá tus herramientas para generar contenido desde fuentes reales.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {mockIntegrations.map((integration) => (
+              {!integrations.some((integration) => integration.connected) && (
+                <div className="flex items-center gap-2 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-700 dark:text-amber-300">
+                  <AlertCircle className="h-5 w-5 shrink-0" />
+                  Conectá GitHub y LinkedIn para habilitar la generación de publicaciones con IA.
+                </div>
+              )}
+              {(integrations.length ? integrations : mockIntegrations).map((integration) => (
                 <div key={integration.provider} className="flex items-center justify-between rounded-xl border border-border p-4">
                   <div>
                     <p className="font-medium capitalize">{integration.provider}</p>
@@ -114,9 +127,7 @@ export default function SettingsPage() {
                       {integration.connected ? `Conectado como ${integration.username}` : "Sin conectar"}
                     </p>
                   </div>
-                  <Badge variant={integration.connected ? "secondary" : "outline"}>
-                    {integration.connected ? "Activo" : "Desconectado"}
-                  </Badge>
+                  <div className="flex items-center gap-3"><Badge variant={integration.connected ? "secondary" : "outline"}>{integration.connected ? "Activo" : "Desconectado"}</Badge>{!integration.connected && integration.provider === "github" && <Button size="sm" onClick={() => connectGitHub()}>Conectar</Button>}{!integration.connected && integration.provider === "linkedin" && <Button size="sm" onClick={() => connectLinkedIn()}>Conectar</Button>}</div>
                 </div>
               ))}
             </CardContent>

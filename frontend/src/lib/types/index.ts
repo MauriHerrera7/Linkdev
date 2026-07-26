@@ -130,4 +130,5 @@ export interface AuthResponse {
 export interface ApiError {
   detail: string;
   code?: string;
+  errors?: Record<string, string[]>;
 }

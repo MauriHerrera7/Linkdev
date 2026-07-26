@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Briefcase,
+  AlertCircle,
   GitBranch,
   Globe,
   Lightbulb,
@@ -30,8 +31,8 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { generatePost } from "@/lib/api/endpoints";
-import type { GeneratePostRequest, PostLength, PostTone, PostType } from "@/lib/types";
+import { generatePost, getIntegrations } from "@/lib/api/endpoints";
+import type { GeneratePostRequest, Integration, PostLength, PostTone, PostType } from "@/lib/types";
 
 const MODES = [
   { id: "idea", label: "Desde idea", icon: Lightbulb, placeholder: "Describe tu idea o tema..." },
@@ -63,10 +64,18 @@ export default function GeneratePage() {
   const [emojiCount, setEmojiCount] = useState([2]);
   const [postType, setPostType] = useState<PostType>("story");
   const [cta, setCta] = useState("");
+  const [integrations, setIntegrations] = useState<Integration[]>([]);
+
+  useEffect(() => { getIntegrations().then(setIntegrations).catch(() => setIntegrations([])); }, []);
+  const aiEnabled = ["github", "linkedin"].every((provider) => integrations.some((integration) => integration.provider === provider && integration.connected));
 
   const currentMode = MODES.find((m) => m.id === mode)!;
 
   async function handleGenerate() {
+    if (!aiEnabled) {
+      toast.error("Conectá GitHub y LinkedIn desde Configuración antes de usar la IA.");
+      return;
+    }
     if (!sourceContent.trim()) {
       toast.error("Ingresá contenido para generar la publicación");
       return;
@@ -221,7 +230,7 @@ export default function GeneratePage() {
             </CardContent>
           </Card>
 
-          <Button variant="gradient" size="lg" className="w-full" onClick={handleGenerate} loading={loading}>
+          <Button variant="gradient" size="lg" className="w-full" onClick={handleGenerate} loading={loading} disabled={!aiEnabled}>
             <Sparkles className="mr-2 h-4 w-4" />
             Generar publicación
           </Button>

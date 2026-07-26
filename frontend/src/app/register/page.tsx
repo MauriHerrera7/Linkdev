@@ -51,7 +51,7 @@ export default function RegisterPage() {
       const auth = await signUp(formData.name.trim(), formData.email.trim(), formData.password);
       saveSession(auth.access, auth.refresh);
       toast.success("¡Cuenta creada con éxito!");
-      router.push(auth.user.onboarding_completed ? "/dashboard" : "/onboarding");
+      router.push("/dashboard");
     } catch (error) {
       toast.error(getApiError(error));
     } finally {
@@ -71,10 +71,10 @@ export default function RegisterPage() {
               </span>
             </div>
             <div className="space-y-4">
-              <h1 className="text-5xl font-bold tracking-tight text-slate-950 dark:text-white">
+              <h1 className="text-5xl font-bold tracking-tight text-slate-950 dark:text-black sm:text-6xl">
                 Empezá ahora.
               </h1>
-              <p className="max-w-xl text-lg text-slate-600 dark:text-slate-300">
+              <p className="max-w-xl text-lg text-slate-600 dark:text-black">
                 Registrate con LinkedIn o GitHub y empezá a publicar fotos, ideas y proyectos.
               </p>
             </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import { Bell, Menu, Moon, Search, Sun } from "lucide-react";
+import { Bell, LogOut, Menu, Moon, Search, Sun } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { IconButton } from "@/components/ui/icon-button";
@@ -14,6 +15,7 @@ interface AppHeaderProps {
 
 export function AppHeader({ title, description, onMenuClick }: AppHeaderProps) {
   const { theme, setTheme } = useTheme();
+  const router = useRouter();
   const initials = mockUser.name
     .split(" ")
     .map((n) => n[0])
@@ -50,6 +52,15 @@ export function AppHeader({ title, description, onMenuClick }: AppHeaderProps) {
         <Avatar className="h-9 w-9 cursor-pointer">
           <AvatarFallback className="bg-primary/10 text-xs text-primary">{initials}</AvatarFallback>
         </Avatar>
+        <IconButton
+          label="Cerrar sesión"
+          icon={LogOut}
+          onClick={() => {
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
+            router.replace("/");
+          }}
+        />
       </div>
     </header>
   );

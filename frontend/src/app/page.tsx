@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   BarChart3,
@@ -76,6 +78,18 @@ const faqs = [
 ];
 
 export default function LandingPage() {
+  const router = useRouter();
+  const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem("access_token")) {
+      setAuthenticated(true);
+      router.replace("/dashboard");
+    }
+  }, [router]);
+
+  if (authenticated) return null;
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
@@ -130,9 +144,6 @@ export default function LandingPage() {
                   Empezá gratis
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
-              </Button>
-              <Button variant="outline" size="lg" asChild>
-                <Link href="/dashboard">Ver demo</Link>
               </Button>
             </div>
             <p className="mt-4 text-sm text-muted-foreground">

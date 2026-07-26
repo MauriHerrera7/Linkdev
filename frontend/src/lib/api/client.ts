@@ -42,7 +42,13 @@ apiClient.interceptors.response.use(
 
 export function getApiError(error: unknown): string {
   if (axios.isAxiosError(error)) {
-    return error.response?.data?.detail ?? "Ocurrió un error inesperado";
+    const data = error.response?.data;
+    const fieldErrors = data?.errors;
+    if (fieldErrors && typeof fieldErrors === "object") {
+      const firstError = Object.values(fieldErrors).flat().find((value) => typeof value === "string");
+      if (typeof firstError === "string") return firstError;
+    }
+    return data?.detail ?? "Ocurrió un error inesperado";
   }
   return "Ocurrió un error inesperado";
 }

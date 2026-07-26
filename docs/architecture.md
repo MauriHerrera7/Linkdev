@@ -1,94 +1,22 @@
-# Architecture
+# Arquitectura
 
-## Frontend
+El frontend Next.js consume la API REST Django en `/api`. Django REST Framework valida JWT, permisos y datos; PostgreSQL 17 persiste el estado. Docker Compose coordina la API y la base en desarrollo.
 
-- Next.js
-- React
-- TailwindCSS
-- Shadcn UI
+| App | Responsabilidad |
+|---|---|
+| `accounts` | Registro, login, refresh JWT y onboarding. |
+| `content` | Posts, calendario y dashboard. |
+| `ideas` | Ideas persistidas y generador local. |
+| `insights` | Generación/mejora local y analytics. |
+| `integrations` | Estado e inicio OAuth. |
+| `common` | Errores API consistentes. |
 
-Responsible for:
+```mermaid
+flowchart LR
+  FE[Next.js] -->|Bearer JWT| API[Django REST Framework]
+  API --> Domain[Apps de dominio]
+  Domain --> PG[(PostgreSQL)]
+  API --> Schema[OpenAPI / Swagger]
+```
 
-- Authentication
-- Dashboard
-- Editor
-- Calendar
-- Analytics
-
----
-
-## Backend
-
-Django REST Framework
-
-Responsibilities
-
-- Authentication
-- AI Requests
-- LinkedIn API
-- GitHub API
-- Scheduling
-- Analytics
-
----
-
-## Database
-
-PostgreSQL
-
-Stores
-
-- Users
-- Posts
-- Drafts
-- Integrations
-- Analytics
-- AI Memory
-
----
-
-## Cache
-
-Redis
-
-Used for
-
-- Celery
-- Sessions
-- Cache
-
----
-
-## AI Layer
-
-OpenAI
-
-LangChain
-
-LangGraph
-
-Responsible for
-
-- Post generation
-
-- Style adaptation
-
-- Prompt engineering
-
-- Memory
-
-- Analytics explanation
-
----
-
-## Background Jobs
-
-Celery
-
-- Publish scheduled posts
-
-- Analytics synchronization
-
-- GitHub synchronization
-
-- Notifications
+La IA actual es local y determinista. LinkedIn, sincronización externa, Redis y tareas en cola no están implementados; no deben asumirse como capacidades operativas.
