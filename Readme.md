@@ -1,4 +1,4 @@
-# 🚀 LinkDev AI
+# 🚀 linkdev
 
 > **Construí tu marca personal en LinkedIn utilizando Inteligencia Artificial.**
 
@@ -13,9 +13,9 @@
 
 ---
 
-# 📖 ¿Qué es LinkDev AI?
+# 📖 ¿Qué es linkdev?
 
-LinkDev AI es una plataforma SaaS impulsada por Inteligencia Artificial diseñada para ayudar a desarrolladores, freelancers y profesionales a construir una marca personal sólida en LinkedIn.
+linkdev es una plataforma SaaS impulsada por Inteligencia Artificial diseñada para ayudar a desarrolladores, freelancers y profesionales a construir una marca personal sólida en LinkedIn.
 
 La plataforma transforma automáticamente tu trabajo diario (proyectos, commits, repositorios, experiencias, portfolio y CV) en publicaciones listas para compartir.
 
