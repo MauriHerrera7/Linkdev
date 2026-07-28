@@ -26,3 +26,20 @@ Registrá también estos callback URLs en cada app de OAuth:
 - `http://localhost:8000/api/auth/linkedin/callback`
 
 GitHub usa el token guardado para listar repositorios y commits. LinkedIn usa el token para dejar la cuenta conectada y habilitar el flujo de publicación.
+
+## Deploy en Render
+
+Si desplegás el backend en Render, definí al menos estas variables:
+
+- `DATABASE_URL`
+- `SECRET_KEY`
+- `ALLOWED_HOSTS` con tu dominio de Render
+- `FRONTEND_URL` con la URL pública del frontend
+- `CORS_ALLOWED_ORIGINS` con la URL pública del frontend
+- `CSRF_TRUSTED_ORIGINS` con la URL pública del frontend
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+- `LINKEDIN_CLIENT_ID`
+- `LINKEDIN_CLIENT_SECRET`
+
+El contenedor ya arranca con `gunicorn`, así que Render no debería apagarlo por falta de comando de inicio.
