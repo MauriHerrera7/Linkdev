@@ -30,6 +30,10 @@ export default function SettingsPage() {
     getIntegrations().then(setIntegrations).catch(() => setIntegrations([]));
   }, []);
 
+  const displayedIntegrations = integrations.length ? integrations : mockIntegrations;
+  const linkedInIntegration = displayedIntegrations.find((integration) => integration.provider === "linkedin");
+  const githubIntegration = displayedIntegrations.find((integration) => integration.provider === "github");
+
   return (
     <AppShell title="Configuración">
       <div className="space-y-6">
@@ -61,39 +65,98 @@ export default function SettingsPage() {
                 <UserCircle className="h-5 w-5 text-primary" />
                 Perfil profesional
               </CardTitle>
-              <CardDescription>Tu identidad y contexto para generar mejores publicaciones.</CardDescription>
+              <CardDescription>Tu identidad, contexto y cuentas conectadas para generar mejores publicaciones.</CardDescription>
             </CardHeader>
-            <CardContent className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label>Nombre</Label>
-                <Input defaultValue={mockUser.name} />
+            <CardContent className="space-y-6">
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>Nombre</Label>
+                  <Input defaultValue={mockUser.name} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Email</Label>
+                  <Input defaultValue={mockUser.email} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Profesión</Label>
+                  <Input defaultValue={mockUser.profession} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Idioma preferido</Label>
+                  <Select defaultValue={mockUser.language}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="es">Español</SelectItem>
+                      <SelectItem value="en">English</SelectItem>
+                      <SelectItem value="pt">Português</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="md:col-span-2 space-y-2">
+                  <Label>Estilo de escritura</Label>
+                  <Textarea defaultValue="Me gusta escribir con un tono profesional pero cercano, usando ejemplos y listas claras." className="min-h-24" />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label>Email</Label>
-                <Input defaultValue={mockUser.email} />
+
+              <div className="space-y-4 rounded-xl border border-border p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="font-medium">Conexiones de cuenta</p>
+                    <p className="text-sm text-muted-foreground">
+                      LinkedIn es obligatorio para publicar; GitHub es opcional para sumar fuentes.
+                    </p>
+                  </div>
+                  {!linkedInIntegration?.connected && <Badge variant="destructive">LinkedIn requerido</Badge>}
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex flex-col gap-3 rounded-lg border border-border p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="font-medium">LinkedIn</p>
+                      <p className="text-sm text-muted-foreground">
+                        {linkedInIntegration?.connected
+                          ? `Conectado como ${linkedInIntegration.username}`
+                          : "Conectá tu cuenta para habilitar publicación y programación."}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Badge variant={linkedInIntegration?.connected ? "secondary" : "outline"}>
+                        {linkedInIntegration?.connected ? "Activo" : "Pendiente"}
+                      </Badge>
+                      {!linkedInIntegration?.connected && (
+                        <Button size="sm" onClick={() => connectLinkedIn()}>
+                          Conectar
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-3 rounded-lg border border-border p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="font-medium">GitHub</p>
+                      <p className="text-sm text-muted-foreground">
+                        {githubIntegration?.connected
+                          ? `Conectado como ${githubIntegration.username}`
+                          : "Opcional. Sirve para generar contenido desde repos y commits."}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Badge variant={githubIntegration?.connected ? "secondary" : "outline"}>
+                        {githubIntegration?.connected ? "Activo" : "Pendiente"}
+                      </Badge>
+                      {!githubIntegration?.connected && (
+                        <Button size="sm" onClick={() => connectGitHub()}>
+                          Conectar
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label>Profesión</Label>
-                <Input defaultValue={mockUser.profession} />
-              </div>
-              <div className="space-y-2">
-                <Label>Idioma preferido</Label>
-                <Select defaultValue={mockUser.language}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="es">Español</SelectItem>
-                    <SelectItem value="en">English</SelectItem>
-                    <SelectItem value="pt">Português</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="md:col-span-2 space-y-2">
-                <Label>Estilo de escritura</Label>
-                <Textarea defaultValue="Me gusta escribir con un tono profesional pero cercano, usando ejemplos y listas claras." className="min-h-24" />
-              </div>
-              <div className="md:col-span-2 flex justify-end">
+
+              <div className="flex justify-end">
                 <Button variant="gradient">
                   <Save className="mr-2 h-4 w-4" />
                   Guardar cambios
@@ -110,16 +173,16 @@ export default function SettingsPage() {
                 <ShieldCheck className="h-5 w-5 text-primary" />
                 Integraciones
               </CardTitle>
-              <CardDescription>Conectá tus herramientas para generar contenido desde fuentes reales.</CardDescription>
+              <CardDescription>Revisá el estado de tus conexiones y asegurate de tener LinkedIn activo.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {!integrations.some((integration) => integration.connected) && (
+              {!linkedInIntegration?.connected && (
                 <div className="flex items-center gap-2 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-700 dark:text-amber-300">
                   <AlertCircle className="h-5 w-5 shrink-0" />
-                  Conectá GitHub y LinkedIn para habilitar la generación de publicaciones con IA.
+                  LinkedIn debe estar conectado para publicar y programar desde la app.
                 </div>
               )}
-              {(integrations.length ? integrations : mockIntegrations).map((integration) => (
+              {displayedIntegrations.map((integration) => (
                 <div key={integration.provider} className="flex items-center justify-between rounded-xl border border-border p-4">
                   <div>
                     <p className="font-medium capitalize">{integration.provider}</p>
@@ -127,7 +190,9 @@ export default function SettingsPage() {
                       {integration.connected ? `Conectado como ${integration.username}` : "Sin conectar"}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3"><Badge variant={integration.connected ? "secondary" : "outline"}>{integration.connected ? "Activo" : "Desconectado"}</Badge>{!integration.connected && integration.provider === "github" && <Button size="sm" onClick={() => connectGitHub()}>Conectar</Button>}{!integration.connected && integration.provider === "linkedin" && <Button size="sm" onClick={() => connectLinkedIn()}>Conectar</Button>}</div>
+                  <Badge variant={integration.connected ? "secondary" : "outline"}>
+                    {integration.connected ? "Activo" : "Desconectado"}
+                  </Badge>
                 </div>
               ))}
             </CardContent>
@@ -158,26 +223,6 @@ export default function SettingsPage() {
                 </div>
                 <Switch defaultChecked />
               </div>
-              <div className="rounded-xl border border-border p-4">
-                <Label>Modelo preferido</Label>
-                <Select defaultValue="gpt4o">
-                  <SelectTrigger className="mt-2">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="gpt4o">GPT-4o</SelectItem>
-                    <SelectItem value="claude">Claude 3.5 Sonnet</SelectItem>
-                    <SelectItem value="gemini">Gemini 2.0</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="rounded-xl border border-border p-4">
-                <div className="flex items-center gap-2">
-                  <KeyRound className="h-4 w-4 text-primary" />
-                  <Label>API Keys</Label>
-                </div>
-                <Input placeholder="sk-..." className="mt-3" />
-              </div>
             </CardContent>
           </Card>
         )}
@@ -202,8 +247,10 @@ export default function SettingsPage() {
               <div className="rounded-xl border border-border p-4">
                 <Label>Temas favoritos</Label>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {['IA', 'Backend', 'Productividad', 'Carrera'].map((theme) => (
-                    <Badge key={theme} variant="secondary">{theme}</Badge>
+                  {["IA", "Backend", "Productividad", "Carrera"].map((theme) => (
+                    <Badge key={theme} variant="secondary">
+                      {theme}
+                    </Badge>
                   ))}
                 </div>
               </div>

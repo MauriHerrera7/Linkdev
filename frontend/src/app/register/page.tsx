@@ -4,16 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { type FormEvent, useState } from "react";
-import { GitBranch, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getApiError } from "@/lib/api/client";
-import { register as signUp, socialLogin } from "@/lib/api/endpoints";
-
-type SocialProvider = "linkedin" | "github";
+import { register as signUp } from "@/lib/api/endpoints";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -22,25 +19,11 @@ export default function RegisterPage() {
     email: "",
     password: "",
   });
-  const [socialLoading, setSocialLoading] = useState<SocialProvider | null>(null);
   const [formLoading, setFormLoading] = useState(false);
-
-  const isBusy = formLoading || socialLoading !== null;
 
   function saveSession(access: string, refresh: string) {
     localStorage.setItem("access_token", access);
     localStorage.setItem("refresh_token", refresh);
-  }
-
-  async function handleSocialLogin(provider: SocialProvider) {
-    setSocialLoading(provider);
-
-    try {
-      await socialLogin(provider);
-    } catch {
-      toast.error("No pudimos abrir LinkedIn o GitHub. Intentá de nuevo.");
-      setSocialLoading(null);
-    }
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -51,7 +34,7 @@ export default function RegisterPage() {
       const auth = await signUp(formData.name.trim(), formData.email.trim(), formData.password);
       saveSession(auth.access, auth.refresh);
       toast.success("¡Cuenta creada con éxito!");
-      router.push("/dashboard");
+      router.push("/onboarding");
     } catch (error) {
       toast.error(getApiError(error));
     } finally {
@@ -75,7 +58,7 @@ export default function RegisterPage() {
                 Empezá ahora.
               </h1>
               <p className="max-w-xl text-lg text-slate-600 dark:text-black">
-                Registrate con LinkedIn o GitHub y empezá a publicar fotos, ideas y proyectos.
+                Creá tu cuenta con email y contraseña, y después conectá LinkedIn para poder publicar.
               </p>
             </div>
             <div className="grid gap-5 sm:grid-cols-2">
@@ -103,7 +86,7 @@ export default function RegisterPage() {
                   />
                 </div>
                 <p className="text-sm font-semibold text-slate-900 dark:text-white">Sin formularios largos</p>
-                <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Solo iniciá sesión con tu cuenta profesional.</p>
+                <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Solo creá tu cuenta y avanzá al onboarding.</p>
               </div>
             </div>
             <div className="rounded-[2rem] bg-card p-6">
@@ -119,36 +102,13 @@ export default function RegisterPage() {
           <div className="mb-8 space-y-4 rounded-[1.75rem] bg-card p-8">
             <h1 className="text-4xl font-semibold text-foreground">Crear cuenta</h1>
             <p className="text-sm text-muted-foreground">
-              Registrate con LinkedIn, GitHub o con tus datos para empezar rápido.
+              Registrate con tus datos para empezar rápido.
             </p>
-          </div>
-
-          <div className="space-y-4">
-            <Button
-              variant="default"
-              className="w-full justify-center rounded-[1.5rem] bg-[var(--brand-900)] text-white shadow-lg shadow-[rgba(10,60,110,0.18)] hover:bg-[var(--brand-600)]"
-              onClick={() => handleSocialLogin("linkedin")}
-              loading={socialLoading === "linkedin"}
-              disabled={isBusy}
-            >
-              <Link2 className="mr-2 h-4 w-4" />
-              Continuar con LinkedIn
-            </Button>
-            <Button
-              variant="default"
-              className="w-full justify-center rounded-[1.5rem] border border-black bg-black text-white shadow-sm shadow-black/15 hover:bg-neutral-900 hover:text-white dark:border-[var(--brand-300)] dark:bg-[var(--brand-900)] dark:text-white dark:hover:bg-[var(--brand-600)]"
-              onClick={() => handleSocialLogin("github")}
-              loading={socialLoading === "github"}
-              disabled={isBusy}
-            >
-              <GitBranch className="mr-2 h-4 w-4" />
-              Continuar con GitHub
-            </Button>
           </div>
 
           <div className="my-8 flex items-center gap-4">
             <div className="h-px flex-1 bg-border" />
-            <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">o completá tus datos</span>
+            <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">completá tus datos</span>
             <div className="h-px flex-1 bg-border" />
           </div>
 
@@ -165,7 +125,7 @@ export default function RegisterPage() {
                   setFormData((current) => ({ ...current, name: event.target.value }))
                 }
                 required
-                disabled={isBusy}
+                disabled={formLoading}
               />
             </div>
 
@@ -181,7 +141,7 @@ export default function RegisterPage() {
                   setFormData((current) => ({ ...current, email: event.target.value }))
                 }
                 required
-                disabled={isBusy}
+                disabled={formLoading}
               />
             </div>
 
@@ -197,7 +157,7 @@ export default function RegisterPage() {
                   setFormData((current) => ({ ...current, password: event.target.value }))
                 }
                 required
-                disabled={isBusy}
+                disabled={formLoading}
               />
             </div>
 
@@ -206,16 +166,16 @@ export default function RegisterPage() {
               variant="gradient"
               className="w-full rounded-[1.5rem]"
               loading={formLoading}
-              disabled={socialLoading !== null}
+              disabled={formLoading}
             >
               Crear cuenta
             </Button>
           </form>
 
           <div className="mt-8 rounded-[1.75rem] bg-card p-5 text-sm text-muted-foreground shadow-sm">
-            <p className="font-semibold text-foreground">Después podés conectar LinkedIn y GitHub.</p>
+            <p className="font-semibold text-foreground">Después conectá LinkedIn desde tu perfil.</p>
             <p className="mt-2 text-sm text-muted-foreground">
-              Tu perfil queda listo para sumar tus cuentas y empezar a publicar contenido profesional.
+              Es el paso obligatorio para publicar y programar contenido desde la app.
             </p>
           </div>
 

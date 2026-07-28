@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Briefcase,
-  AlertCircle,
   GitBranch,
   Globe,
   Lightbulb,
@@ -67,13 +66,13 @@ export default function GeneratePage() {
   const [integrations, setIntegrations] = useState<Integration[]>([]);
 
   useEffect(() => { getIntegrations().then(setIntegrations).catch(() => setIntegrations([])); }, []);
-  const aiEnabled = ["github", "linkedin"].every((provider) => integrations.some((integration) => integration.provider === provider && integration.connected));
+  const linkedInConnected = integrations.some((integration) => integration.provider === "linkedin" && integration.connected);
 
   const currentMode = MODES.find((m) => m.id === mode)!;
 
   async function handleGenerate() {
-    if (!aiEnabled) {
-      toast.error("Conectá GitHub y LinkedIn desde Configuración antes de usar la IA.");
+    if (!linkedInConnected) {
+      toast.error("Conectá LinkedIn desde Configuración antes de generar o publicar.");
       return;
     }
     if (!sourceContent.trim()) {
@@ -230,7 +229,7 @@ export default function GeneratePage() {
             </CardContent>
           </Card>
 
-          <Button variant="gradient" size="lg" className="w-full" onClick={handleGenerate} loading={loading} disabled={!aiEnabled}>
+          <Button variant="gradient" size="lg" className="w-full" onClick={handleGenerate} loading={loading} disabled={!linkedInConnected}>
             <Sparkles className="mr-2 h-4 w-4" />
             Generar publicación
           </Button>

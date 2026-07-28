@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowRight,
@@ -53,7 +53,7 @@ const benefits = [
 ];
 
 const steps = [
-  { step: "01", title: "Conectá tus fuentes", description: "GitHub, LinkedIn o simplemente contanos sobre vos." },
+  { step: "01", title: "Conectá tus fuentes", description: "LinkedIn para publicar y GitHub como fuente opcional." },
   { step: "02", title: "Generá contenido", description: "Elegí un modo, personalizá el tono y dejá que la IA escriba." },
   { step: "03", title: "Publicá y crecé", description: "Programá, publicá y analizá tu crecimiento profesional." },
 ];
@@ -61,7 +61,7 @@ const steps = [
 const faqs = [
   {
     q: "¿Necesito conectar LinkedIn para usar linkdev?",
-    a: "No es obligatorio. Podés generar, editar y exportar publicaciones sin conectar LinkedIn. La integración permite programar y publicar directamente.",
+    a: "Sí, LinkedIn es obligatorio para publicar y programar desde la app. Sin esa conexión, podés explorar el contenido pero no enviarlo a tu perfil.",
   },
   {
     q: "¿La IA realmente aprende mi estilo de escritura?",
@@ -79,16 +79,12 @@ const faqs = [
 
 export default function LandingPage() {
   const router = useRouter();
-  const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
-      setAuthenticated(true);
       router.replace("/dashboard");
     }
   }, [router]);
-
-  if (authenticated) return null;
 
   return (
     <div className="min-h-screen bg-background">

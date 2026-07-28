@@ -4,16 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { type FormEvent, useState } from "react";
-import { GitBranch, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getApiError } from "@/lib/api/client";
-import { login as signIn, socialLogin } from "@/lib/api/endpoints";
-
-type SocialProvider = "linkedin" | "github";
+import { login as signIn } from "@/lib/api/endpoints";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,25 +18,11 @@ export default function LoginPage() {
     email: "",
     password: "",
   });
-  const [socialLoading, setSocialLoading] = useState<SocialProvider | null>(null);
   const [formLoading, setFormLoading] = useState(false);
-
-  const isBusy = formLoading || socialLoading !== null;
 
   function saveSession(access: string, refresh: string) {
     localStorage.setItem("access_token", access);
     localStorage.setItem("refresh_token", refresh);
-  }
-
-  async function handleSocialLogin(provider: SocialProvider) {
-    setSocialLoading(provider);
-
-    try {
-      await socialLogin(provider);
-    } catch {
-      toast.error("No pudimos abrir LinkedIn o GitHub. Intentá de nuevo.");
-      setSocialLoading(null);
-    }
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -116,36 +99,12 @@ export default function LoginPage() {
           <div className="mb-8 space-y-4 rounded-[1.75rem] bg-card p-8">
             <h1 className="text-4xl font-semibold text-foreground">Iniciar sesión</h1>
             <p className="text-sm text-muted-foreground">
-              Entrá con LinkedIn, GitHub o con tu email y contraseña.
+              Entrá con tu email y contraseña.
             </p>
-          </div>
-
-          <div className="space-y-4">
-            <Button
-              variant="default"
-              className="w-full justify-center rounded-[1.5rem] bg-[var(--brand-900)] text-white shadow-lg shadow-[rgba(10,60,110,0.18)] hover:bg-[var(--brand-600)]"
-              onClick={() => handleSocialLogin("linkedin")}
-              loading={socialLoading === "linkedin"}
-              disabled={isBusy}
-            >
-              <Link2 className="mr-2 h-4 w-4" />
-              Continuar con LinkedIn
-            </Button>
-            <Button
-              variant="default"
-              className="w-full justify-center rounded-[1.5rem] border border-black bg-black text-white shadow-sm shadow-black/15 hover:bg-neutral-900 hover:text-white dark:border-[var(--brand-300)] dark:bg-[var(--brand-900)] dark:text-white dark:hover:bg-[var(--brand-600)]"
-              onClick={() => handleSocialLogin("github")}
-              loading={socialLoading === "github"}
-              disabled={isBusy}
-            >
-              <GitBranch className="mr-2 h-4 w-4" />
-              Continuar con GitHub
-            </Button>
           </div>
 
           <div className="my-8 flex items-center gap-4">
             <div className="h-px flex-1 bg-border" />
-            <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">o usá tu email</span>
             <div className="h-px flex-1 bg-border" />
           </div>
 
@@ -162,7 +121,7 @@ export default function LoginPage() {
                   setFormData((current) => ({ ...current, email: event.target.value }))
                 }
                 required
-                disabled={isBusy}
+                disabled={formLoading}
               />
             </div>
 
@@ -178,7 +137,7 @@ export default function LoginPage() {
                   setFormData((current) => ({ ...current, password: event.target.value }))
                 }
                 required
-                disabled={isBusy}
+                disabled={formLoading}
               />
             </div>
 
@@ -187,7 +146,7 @@ export default function LoginPage() {
               variant="gradient"
               className="w-full rounded-[1.5rem]"
               loading={formLoading}
-              disabled={socialLoading !== null}
+              disabled={formLoading}
             >
               Ingresar
             </Button>

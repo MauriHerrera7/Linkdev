@@ -221,3 +221,13 @@ select:focus-visible {
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
+
+@media (prefers-color-scheme: dark) {
+  .dark\:text-white {
+    color: #52a9ff;
+  }
+
+  .dark\:text-\[var\(--brand-100\)\] {
+    color: #0070f3;
+  }
+}
