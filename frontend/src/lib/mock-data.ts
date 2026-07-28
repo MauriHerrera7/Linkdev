@@ -147,7 +147,6 @@ export const mockCalendarEvents: CalendarEvent[] = mockPosts
 export const mockIntegrations: Integration[] = [
   { provider: "github", connected: true, username: "mauricio-herrera", connected_at: "2025-06-01T00:00:00Z" },
   { provider: "linkedin", connected: false },
-  { provider: "google", connected: true, username: "mauricio@linkdev.ai", connected_at: "2025-01-15T00:00:00Z" },
 ];
 
 export const CATEGORY_LABELS: Record<string, string> = {

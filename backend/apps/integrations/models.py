@@ -6,7 +6,6 @@ class Integration(models.Model):
     class Provider(models.TextChoices):
         GITHUB = "github", "GitHub"
         LINKEDIN = "linkedin", "LinkedIn"
-        GOOGLE = "google", "Google"
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="integrations")
     provider = models.CharField(max_length=20, choices=Provider.choices)

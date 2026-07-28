@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Bookmark, Lightbulb, Search, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 import { AppShell } from "@/components/layout/app-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EmptyState } from "@/components/shared/empty-state";
+import { getIdeas } from "@/lib/api/endpoints";
 import { CATEGORY_LABELS, mockIdeas } from "@/lib/mock-data";
 import type { IdeaCategory } from "@/lib/types";
 import Link from "next/link";
@@ -24,6 +26,7 @@ export default function IdeasPage() {
   const [category, setCategory] = useState<IdeaCategory | "all">("all");
   const [search, setSearch] = useState("");
   const [ideas, setIdeas] = useState(mockIdeas);
+  const [loadingIdeas, setLoadingIdeas] = useState(false);
 
   const filtered = ideas.filter((idea) => {
     const matchCategory = category === "all" || idea.category === category;
@@ -40,6 +43,23 @@ export default function IdeasPage() {
     );
   }
 
+  async function handleGenerateIdeas() {
+    setLoadingIdeas(true);
+    try {
+      const generatedIdeas = await getIdeas(category === "all" ? undefined : category);
+      setIdeas((previousIdeas) => {
+        const existingIds = new Set(previousIdeas.map((idea) => idea.id));
+        const freshIdeas = generatedIdeas.filter((idea) => !existingIds.has(idea.id));
+        return [...freshIdeas, ...previousIdeas];
+      });
+      toast.success("Ideas generadas con IA");
+    } catch {
+      toast.error("No pudimos generar ideas en este momento");
+    } finally {
+      setLoadingIdeas(false);
+    }
+  }
+
   return (
     <AppShell title="Banco de Ideas">
       <div className="space-y-6">
@@ -53,7 +73,7 @@ export default function IdeasPage() {
               className="pl-9"
             />
           </div>
-          <Button variant="gradient">
+          <Button variant="gradient" onClick={handleGenerateIdeas} loading={loadingIdeas}>
             <Sparkles className="mr-2 h-4 w-4" />
             Generar ideas con IA
           </Button>
@@ -73,7 +93,7 @@ export default function IdeasPage() {
             icon={Lightbulb}
             title="No hay ideas en esta categoría"
             description="Probá otra categoría o generá ideas nuevas con IA."
-            action={{ label: "Generar ideas", onClick: () => {} }}
+            action={{ label: "Generar ideas", onClick: handleGenerateIdeas }}
           />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

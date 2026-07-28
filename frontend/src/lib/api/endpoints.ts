@@ -4,6 +4,8 @@ import type {
   AuthResponse,
   CalendarEvent,
   DashboardStats,
+  GitHubCommit,
+  GitHubRepository,
   GeneratePostRequest,
   GeneratePostResponse,
   Idea,
@@ -134,14 +136,25 @@ export async function getIntegrations(): Promise<Integration[]> {
 }
 
 export async function connectGitHub(): Promise<void> {
-  window.location.href = `${apiClient.defaults.baseURL}/github/connect`;
+  const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+  window.location.href = token
+    ? `${apiClient.defaults.baseURL}/github/connect?token=${encodeURIComponent(token)}`
+    : "/login";
 }
 
 export async function connectLinkedIn(): Promise<void> {
-  window.location.href = `${apiClient.defaults.baseURL}/linkedin/connect`;
+  const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+  window.location.href = token
+    ? `${apiClient.defaults.baseURL}/linkedin/connect?token=${encodeURIComponent(token)}`
+    : "/login";
 }
 
-export async function getGitHubRepos(): Promise<{ id: string; name: string; description: string }[]> {
-  const { data } = await apiClient.get("/github/repositories");
+export async function getGitHubRepos(): Promise<GitHubRepository[]> {
+  const { data } = await apiClient.get<GitHubRepository[]>("/github/repositories");
+  return data;
+}
+
+export async function getGitHubCommits(repository: string): Promise<GitHubCommit[]> {
+  const { data } = await apiClient.get<GitHubCommit[]>(`/github/repositories/${encodeURIComponent(repository)}/commits`);
   return data;
 }

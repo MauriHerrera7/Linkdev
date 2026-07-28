@@ -6,6 +6,7 @@ from apps.accounts.models import User
 from apps.content.models import Post
 from apps.integrations.models import Integration
 from django.utils import timezone
+from rest_framework_simplejwt.tokens import AccessToken
 
 
 @override_settings(SECURE_SSL_REDIRECT=False)
@@ -66,3 +67,31 @@ class AITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("content", response.data)
         self.assertIn("Django REST Framework", response.data["content"])
+
+
+@override_settings(
+    SECURE_SSL_REDIRECT=False,
+    GITHUB_CLIENT_ID="github-client-id",
+    GITHUB_CLIENT_SECRET="github-client-secret",
+    LINKEDIN_CLIENT_ID="linkedin-client-id",
+    LINKEDIN_CLIENT_SECRET="linkedin-client-secret",
+)
+class OAuthTests(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(name="OAuth User", email="oauth@example.com", password="A-strong-password-2026")
+
+    def test_github_start_redirects_with_access_token(self):
+        token = str(AccessToken.for_user(self.user))
+
+        response = self.client.get(f"/api/auth/github?token={token}")
+
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.assertIn("github.com/login/oauth/authorize", response.url)
+        self.assertIn("client_id=github-client-id", response.url)
+
+    def test_github_repositories_requires_connection(self):
+        self.client.force_authenticate(self.user)
+
+        response = self.client.get("/api/github/repositories")
+
+        self.assertEqual(response.status_code, status.HTTP_503_SERVICE_UNAVAILABLE)

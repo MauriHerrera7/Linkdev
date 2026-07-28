@@ -106,10 +106,29 @@ export interface OnboardingData {
 }
 
 export interface Integration {
-  provider: "github" | "linkedin" | "google";
+  provider: "github" | "linkedin";
   connected: boolean;
   username?: string;
   connected_at?: string;
+}
+
+export interface GitHubRepository {
+  id: string;
+  name: string;
+  full_name: string;
+  description: string;
+  private: boolean;
+  language: string;
+  html_url: string;
+  updated_at: string;
+}
+
+export interface GitHubCommit {
+  sha: string;
+  message: string;
+  author: string;
+  date: string;
+  html_url: string;
 }
 
 export interface CalendarEvent {

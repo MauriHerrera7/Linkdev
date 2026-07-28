@@ -1,18 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import {
-  Briefcase,
-  GitBranch,
-  Globe,
-  Lightbulb,
-  Link2,
-  MessageSquare,
-  PenLine,
-  Sparkles,
-  Wrench,
-} from "lucide-react";
+import { Briefcase, GitBranch, Globe, Lightbulb, Link2, MessageSquare, PenLine, Sparkles, Wrench } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/layout/app-shell";
 import { LinkedInPreview } from "@/components/generate/linkedin-preview";
@@ -21,17 +11,25 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { generatePost, getIntegrations } from "@/lib/api/endpoints";
-import type { GeneratePostRequest, Integration, PostLength, PostTone, PostType } from "@/lib/types";
+import {
+  connectGitHub,
+  generatePost,
+  getGitHubCommits,
+  getGitHubRepos,
+  getIntegrations,
+} from "@/lib/api/endpoints";
+import type {
+  GeneratePostRequest,
+  GitHubCommit,
+  GitHubRepository,
+  Integration,
+  PostLength,
+  PostTone,
+  PostType,
+} from "@/lib/types";
 
 const MODES = [
   { id: "idea", label: "Desde idea", icon: Lightbulb, placeholder: "Describe tu idea o tema..." },
@@ -64,11 +62,79 @@ export default function GeneratePage() {
   const [postType, setPostType] = useState<PostType>("story");
   const [cta, setCta] = useState("");
   const [integrations, setIntegrations] = useState<Integration[]>([]);
+  const [repositories, setRepositories] = useState<GitHubRepository[]>([]);
+  const [selectedRepository, setSelectedRepository] = useState<GitHubRepository | null>(null);
+  const [commits, setCommits] = useState<GitHubCommit[]>([]);
+  const [repositoriesLoading, setRepositoriesLoading] = useState(false);
 
-  useEffect(() => { getIntegrations().then(setIntegrations).catch(() => setIntegrations([])); }, []);
-  const linkedInConnected = integrations.some((integration) => integration.provider === "linkedin" && integration.connected);
+  useEffect(() => {
+    getIntegrations().then(setIntegrations).catch(() => setIntegrations([]));
+  }, []);
 
-  const currentMode = MODES.find((m) => m.id === mode)!;
+  const linkedInConnected = useMemo(
+    () => integrations.some((integration) => integration.provider === "linkedin" && integration.connected),
+    [integrations]
+  );
+  const githubConnected = useMemo(
+    () => integrations.some((integration) => integration.provider === "github" && integration.connected),
+    [integrations]
+  );
+  const githubActive = mode === "github" && githubConnected;
+  const displayedRepositories = githubActive ? repositories : [];
+  const displayedSelectedRepository = githubActive ? selectedRepository : null;
+  const displayedCommits = githubActive ? commits : [];
+
+  const currentMode = MODES.find((item) => item.id === mode)!;
+
+  useEffect(() => {
+    if (!githubActive) {
+      return;
+    }
+
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) setRepositoriesLoading(true);
+    });
+    getGitHubRepos()
+      .then((items) => {
+        if (!active) return;
+        setRepositories(items);
+        setSelectedRepository((currentSelection) => currentSelection ?? items[0] ?? null);
+      })
+      .catch(() => {
+        if (active) {
+          setRepositories([]);
+          setSelectedRepository(null);
+          setCommits([]);
+        }
+      })
+      .finally(() => {
+        if (active) setRepositoriesLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [githubActive]);
+
+  useEffect(() => {
+    if (!githubActive || !selectedRepository?.full_name) {
+      return;
+    }
+
+    let active = true;
+    getGitHubCommits(selectedRepository.full_name)
+      .then((items) => {
+        if (active) setCommits(items);
+      })
+      .catch(() => {
+        if (active) setCommits([]);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [githubActive, selectedRepository]);
 
   async function handleGenerate() {
     if (!linkedInConnected) {
@@ -84,6 +150,7 @@ export default function GeneratePage() {
       const result = await generatePost({
         mode,
         source_content: sourceContent,
+        repository_id: displayedSelectedRepository?.full_name,
         tone,
         length,
         emoji_count: emojiCount[0],
@@ -103,37 +170,34 @@ export default function GeneratePage() {
   return (
     <AppShell title="Generar publicación">
       <div className="grid gap-6 lg:grid-cols-5">
-        {/* Left panel - Input & Controls */}
         <div className="space-y-6 lg:col-span-3">
-          {/* Mode selector */}
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Modo de creación</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
-                {MODES.map((m) => (
+                {MODES.map((item) => (
                   <button
                     type="button"
-                    key={m.id}
-                    onClick={() => setMode(m.id)}
+                    key={item.id}
+                    onClick={() => setMode(item.id)}
                     className={cn(
                       "flex flex-col items-center gap-2 rounded-lg border border-border bg-card p-3 text-center text-xs font-medium text-[var(--text)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] dark:bg-[var(--surface)] dark:text-[var(--text)]",
-                      mode === m.id
+                      mode === item.id
                         ? "border-[var(--brand-900)] bg-[var(--brand-100)] text-[var(--brand-900)] shadow-sm dark:border-[var(--brand-300)] dark:bg-white/10 dark:text-white"
                         : "hover:border-[var(--brand-900)] hover:bg-[var(--brand-100)] hover:text-[var(--brand-900)] dark:hover:border-[var(--brand-300)] dark:hover:bg-white/10"
                     )}
-                    aria-pressed={mode === m.id}
+                    aria-pressed={mode === item.id}
                   >
-                    <m.icon className="h-5 w-5" />
-                    {m.label}
+                    <item.icon className="h-5 w-5" />
+                    {item.label}
                   </button>
                 ))}
               </div>
             </CardContent>
           </Card>
 
-          {/* Source input */}
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base">{currentMode.label}</CardTitle>
@@ -142,15 +206,84 @@ export default function GeneratePage() {
               <Textarea
                 placeholder={currentMode.placeholder}
                 value={sourceContent}
-                onChange={(e) => setSourceContent(e.target.value)}
+                onChange={(event) => setSourceContent(event.target.value)}
                 className="min-h-[140px]"
               />
+
               {mode === "github" && (
-                <Button variant="outline" size="sm">
-                  <GitBranch className="mr-2 h-4 w-4" />
-                  Conectar repositorio
-                </Button>
+                <div className="space-y-3">
+                  <Button variant="outline" size="sm" onClick={() => connectGitHub()}>
+                    <GitBranch className="mr-2 h-4 w-4" />
+                    Conectar GitHub
+                  </Button>
+
+                  {githubConnected && (
+                    <div className="space-y-3 rounded-xl border border-border p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-medium">Repositorios conectados</p>
+                          <p className="text-xs text-muted-foreground">
+                            Elegí un repositorio para usarlo como fuente de contenido.
+                          </p>
+                        </div>
+                        {displayedSelectedRepository && (
+                          <span className="text-xs text-muted-foreground">
+                            Seleccionado: {displayedSelectedRepository.full_name}
+                          </span>
+                        )}
+                      </div>
+
+                      {repositoriesLoading ? (
+                        <p className="text-sm text-muted-foreground">Cargando repositorios…</p>
+                      ) : displayedRepositories.length ? (
+                        <div className="grid gap-2">
+                          {displayedRepositories.slice(0, 6).map((repository) => (
+                            <button
+                              type="button"
+                              key={repository.id}
+                              onClick={() => setSelectedRepository(repository)}
+                              className={`rounded-lg border p-3 text-left text-sm transition-all ${
+                                selectedRepository?.id === repository.id
+                                  ? "border-[var(--brand-900)] bg-[var(--brand-100)] text-[var(--brand-900)] dark:border-[var(--brand-300)] dark:bg-white/10 dark:text-white"
+                                  : "border-border hover:border-[var(--brand-900)] hover:bg-[var(--brand-100)] dark:hover:border-[var(--brand-300)] dark:hover:bg-white/10"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between gap-3">
+                                <span className="font-medium">{repository.full_name}</span>
+                                <span className="text-xs text-muted-foreground">{repository.private ? "Privado" : "Público"}</span>
+                              </div>
+                              <p className="mt-1 text-xs text-muted-foreground">{repository.description || "Sin descripción"}</p>
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">No encontramos repositorios todavía.</p>
+                      )}
+
+                      {displayedSelectedRepository && (
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium">Commits recientes</p>
+                          {displayedCommits.length ? (
+                            <div className="space-y-2">
+                              {displayedCommits.slice(0, 5).map((commit) => (
+                                <div key={commit.sha} className="rounded-lg border border-border p-3 text-xs">
+                                  <p className="font-medium">{commit.message}</p>
+                                  <p className="mt-1 text-muted-foreground">
+                                    {commit.author} · {new Date(commit.date).toLocaleDateString()}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-xs text-muted-foreground">Todavía no hay commits para mostrar.</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               )}
+
               {mode === "url" && (
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Globe className="h-3 w-3" />
@@ -160,7 +293,6 @@ export default function GeneratePage() {
             </CardContent>
           </Card>
 
-          {/* Customization controls */}
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Personalización</CardTitle>
@@ -169,8 +301,10 @@ export default function GeneratePage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Tono</Label>
-                  <Select value={tone} onValueChange={(v) => setTone(v as PostTone)}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                  <Select value={tone} onValueChange={(value) => setTone(value as PostTone)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="professional">Profesional</SelectItem>
                       <SelectItem value="casual">Casual</SelectItem>
@@ -182,8 +316,10 @@ export default function GeneratePage() {
                 </div>
                 <div className="space-y-2">
                   <Label>Longitud</Label>
-                  <Select value={length} onValueChange={(v) => setLength(v as PostLength)}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                  <Select value={length} onValueChange={(value) => setLength(value as PostLength)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="short">Corta (~500 chars)</SelectItem>
                       <SelectItem value="medium">Media (~1000 chars)</SelectItem>
@@ -193,8 +329,10 @@ export default function GeneratePage() {
                 </div>
                 <div className="space-y-2">
                   <Label>Tipo de publicación</Label>
-                  <Select value={postType} onValueChange={(v) => setPostType(v as PostType)}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                  <Select value={postType} onValueChange={(value) => setPostType(value as PostType)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="story">Historia</SelectItem>
                       <SelectItem value="tip">Tip / Consejo</SelectItem>
@@ -207,8 +345,10 @@ export default function GeneratePage() {
                 </div>
                 <div className="space-y-2">
                   <Label>Call to action</Label>
-                  <Select value={cta || "none"} onValueChange={(v) => setCta(v === "none" ? "" : v)}>
-                    <SelectTrigger><SelectValue placeholder="Opcional" /></SelectTrigger>
+                  <Select value={cta || "none"} onValueChange={(value) => setCta(value === "none" ? "" : value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Opcional" />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">Ninguno</SelectItem>
                       <SelectItem value="comment">Pedir comentarios</SelectItem>
@@ -235,7 +375,6 @@ export default function GeneratePage() {
           </Button>
         </div>
 
-        {/* Right panel - Preview & Actions */}
         <div className="space-y-4 lg:col-span-2">
           <LinkedInPreview content={generatedContent} />
 
@@ -243,32 +382,34 @@ export default function GeneratePage() {
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
               <Tabs defaultValue="edit">
                 <TabsList className="w-full">
-                  <TabsTrigger value="edit" className="flex-1">Editar</TabsTrigger>
-                  <TabsTrigger value="improve" className="flex-1">Mejorar con IA</TabsTrigger>
+                  <TabsTrigger value="edit" className="flex-1">
+                    Editar
+                  </TabsTrigger>
+                  <TabsTrigger value="improve" className="flex-1">
+                    Mejorar con IA
+                  </TabsTrigger>
                 </TabsList>
                 <TabsContent value="edit">
-                  <Textarea
-                    value={generatedContent}
-                    onChange={(e) => setGeneratedContent(e.target.value)}
-                    className="min-h-[200px]"
-                  />
+                  <Textarea value={generatedContent} onChange={(event) => setGeneratedContent(event.target.value)} className="min-h-[200px]" />
                 </TabsContent>
                 <TabsContent value="improve">
                   <div className="flex flex-wrap gap-2">
-                    {["Más profesional", "Más corta", "Agregar storytelling", "Mejorar CTA", "Más técnica"].map(
-                      (action) => (
-                        <Button key={action} variant="outline" size="sm">
-                          {action}
-                        </Button>
-                      )
-                    )}
+                    {["Más profesional", "Más corta", "Agregar storytelling", "Mejorar CTA", "Más técnica"].map((action) => (
+                      <Button key={action} variant="outline" size="sm">
+                        {action}
+                      </Button>
+                    ))}
                   </div>
                 </TabsContent>
               </Tabs>
 
               <div className="flex gap-2">
-                <Button variant="outline" className="flex-1">Guardar borrador</Button>
-                <Button variant="gradient" className="flex-1">Programar</Button>
+                <Button variant="outline" className="flex-1">
+                  Guardar borrador
+                </Button>
+                <Button variant="gradient" className="flex-1" disabled={!linkedInConnected}>
+                  Programar
+                </Button>
               </div>
             </motion.div>
           )}
