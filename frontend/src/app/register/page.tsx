@@ -54,10 +54,10 @@ export default function RegisterPage() {
               </span>
             </div>
             <div className="space-y-4">
-              <h1 className="text-5xl font-bold tracking-tight text-slate-950 dark:text-black sm:text-6xl">
+              <h1 className="text-5xl font-bold tracking-tight text-foreground">
                 Empezá ahora.
               </h1>
-              <p className="max-w-xl text-lg text-slate-600 dark:text-black">
+              <p className="max-w-xl text-lg text-muted-foreground">
                 Creá tu cuenta con email y contraseña, y después conectá LinkedIn para poder publicar.
               </p>
             </div>
