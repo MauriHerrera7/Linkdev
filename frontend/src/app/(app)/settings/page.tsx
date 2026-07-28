@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AlertCircle, Bot, Palette, Save, ShieldCheck, UserCircle } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { AppShell } from "@/components/layout/app-shell";
 import { Badge } from "@/components/ui/badge";
@@ -28,15 +28,15 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]["id"]>("profile");
   const [integrations, setIntegrations] = useState<Integration[]>([]);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const integrationStatus = searchParams.get("integration");
-  const status = searchParams.get("status");
 
   useEffect(() => {
     getIntegrations().then(setIntegrations).catch(() => setIntegrations([]));
   }, []);
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const integrationStatus = searchParams.get("integration");
+    const status = searchParams.get("status");
     if (!integrationStatus || !status) return;
     if (status === "connected") {
       toast.success(`${integrationStatus === "github" ? "GitHub" : "LinkedIn"} conectado correctamente.`);
@@ -44,7 +44,7 @@ export default function SettingsPage() {
       toast.error(`No pudimos conectar ${integrationStatus === "github" ? "GitHub" : "LinkedIn"}.`);
     }
     router.replace("/settings");
-  }, [integrationStatus, router, status]);
+  }, [router]);
 
   const displayedIntegrations = integrations.length ? integrations : mockIntegrations;
   const linkedInIntegration = displayedIntegrations.find((integration) => integration.provider === "linkedin");
