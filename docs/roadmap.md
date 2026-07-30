@@ -3,8 +3,9 @@
 ## MVP
 
 - Authentication
-- Dashboard
 - AI Generator
+- Ideas
+- Settings
 - Editor
 - Drafts
 
@@ -14,32 +15,21 @@
 
 - GitHub Analysis
 - Portfolio Analysis
-- Calendar
+- Content sources
 
 ---
 
 ## V3
 
-- LinkedIn Publishing
-- Scheduling
-- Analytics
-
----
-
-## V4
-
-- AI Memory
-- Viral Score
-- Personal Brand Assistant
+- AI Coach
+- Personalization
+- Smarter prompts
 
 ---
 
 ## Future
 
 - Mobile App
-
 - Browser Extension
-
 - Team Workspace
-
 - Agency Version

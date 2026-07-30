@@ -13,6 +13,7 @@ El compose levanta PostgreSQL 17 con el volumen `postgres_data` y el backend. Es
 | `DEBUG` | Sólo `True` en desarrollo. |
 | `ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS` | Listas separadas por coma. |
 | `SECRET_KEY` | Nunca versionar ni reutilizar. |
-| `GITHUB_*`, `LINKEDIN_*` | Credenciales OAuth cuando se habiliten. |
+| `GEMINI_API_KEY`, `GEMINI_MODEL` | Generación de publicaciones con Gemini. |
+| `GITHUB_*` | Credenciales OAuth cuando se habiliten. |
 
 Sin Docker: levantar PostgreSQL, instalar `pip install -r backend/requirements.txt`, ejecutar `python manage.py migrate` desde `backend/` y luego `python manage.py runserver`.

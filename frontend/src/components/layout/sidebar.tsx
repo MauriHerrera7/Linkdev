@@ -3,10 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  BarChart3,
-  Calendar,
   ChevronLeft,
-  LayoutDashboard,
   Lightbulb,
   PenLine,
   Settings,
@@ -16,11 +13,8 @@ import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/generate", label: "Generar", icon: PenLine },
   { href: "/ideas", label: "Ideas", icon: Lightbulb },
-  { href: "/calendar", label: "Calendario", icon: Calendar },
-  { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/settings", label: "Configuración", icon: Settings },
 ];
 

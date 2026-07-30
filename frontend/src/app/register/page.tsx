@@ -58,7 +58,7 @@ export default function RegisterPage() {
                 Empezá ahora.
               </h1>
               <p className="max-w-xl text-lg text-muted-foreground">
-                Creá tu cuenta con email y contraseña, y después conectá LinkedIn para poder publicar.
+                Creá tu cuenta con email y contraseña, y después conectá GitHub para sumar contexto a tus publicaciones.
               </p>
             </div>
             <div className="grid gap-5 sm:grid-cols-2">
@@ -173,9 +173,9 @@ export default function RegisterPage() {
           </form>
 
           <div className="mt-8 rounded-[1.75rem] bg-card p-5 text-sm text-muted-foreground shadow-sm">
-            <p className="font-semibold text-foreground">Después conectá LinkedIn desde tu perfil.</p>
+            <p className="font-semibold text-foreground">Después conectá GitHub desde Ajustes.</p>
             <p className="mt-2 text-sm text-muted-foreground">
-              Es el paso obligatorio para publicar y programar contenido desde la app.
+              Es el paso opcional para importar repos y commits como fuente de inspiración.
             </p>
           </div>
 

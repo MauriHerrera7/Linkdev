@@ -16,7 +16,7 @@ Las claves de negocio son UUID y las fechas se exponen en ISO 8601.
 
 ## Integración
 
-`integrations.Integration` es única por usuario y proveedor (`github`, `linkedin`, `google`). Expone estado, nombre externo y fecha de conexión.
+`integrations.Integration` es única por usuario y proveedor (`github`). Expone estado, nombre externo y fecha de conexión.
 
 ```mermaid
 erDiagram

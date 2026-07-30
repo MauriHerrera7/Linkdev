@@ -9,4 +9,4 @@
 
 Producción: usar `DEBUG=False`, HTTPS, `check --deploy`, secretos gestionados externamente, backups cifrados y logs centralizados. No registrar contraseñas, JWT ni credenciales OAuth.
 
-GitHub y LinkedIn devuelven `503 integration_not_configured` hasta contar con credenciales y callback OAuth aprobados; no se simulan integraciones.
+GitHub devuelve `503 integration_not_configured` hasta contar con credenciales y callback OAuth aprobados; no se simulan integraciones.

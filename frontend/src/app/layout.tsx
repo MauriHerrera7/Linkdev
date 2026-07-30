@@ -5,10 +5,10 @@ import { ToastProvider } from "@/providers/toast-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "linkdev — Construí tu marca personal en LinkedIn",
+  title: "linkdev — Construí tu marca personal con IA",
   description:
-    "Plataforma SaaS con IA para ayudar a desarrolladores y profesionales tech a crear contenido de calidad para LinkedIn de forma constante.",
-  keywords: ["LinkedIn", "IA", "contenido", "desarrolladores", "marca personal"],
+    "Plataforma SaaS con IA para ayudar a desarrolladores y profesionales tech a crear contenido de calidad de forma constante.",
+  keywords: ["IA", "contenido", "desarrolladores", "marca personal"],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

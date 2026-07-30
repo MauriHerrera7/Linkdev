@@ -1,18 +1,23 @@
-from django.urls import reverse
-from rest_framework import status
-from rest_framework.test import APITestCase
+import json
+from unittest.mock import patch
+
 from django.test import override_settings
+from rest_framework import status
+from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework.test import APITestCase
+
 from apps.accounts.models import User
 from apps.content.models import Post
-from apps.integrations.models import Integration
-from django.utils import timezone
-from rest_framework_simplejwt.tokens import AccessToken
 
 
 @override_settings(SECURE_SSL_REDIRECT=False)
 class AuthenticationTests(APITestCase):
     def test_register_returns_tokens_and_user(self):
-        response = self.client.post("/api/auth/register", {"name": "Ada Lovelace", "email": "ada@example.com", "password": "A-strong-password-2026"}, format="json")
+        response = self.client.post(
+            "/api/auth/register",
+            {"name": "Ada Lovelace", "email": "ada@example.com", "password": "A-strong-password-2026"},
+            format="json",
+        )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn("access", response.data)
@@ -35,7 +40,11 @@ class PostTests(APITestCase):
         self.client.force_authenticate(self.user)
 
     def test_post_is_created_for_authenticated_user(self):
-        response = self.client.post("/api/posts", {"content": "Contenido profesional validado.", "status": "draft", "tone": "professional", "post_type": "tip"}, format="json")
+        response = self.client.post(
+            "/api/posts",
+            {"content": "Contenido profesional validado.", "status": "draft", "tone": "professional", "post_type": "tip"},
+            format="json",
+        )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Post.objects.get().author, self.user)
@@ -57,24 +66,79 @@ class PostTests(APITestCase):
 class AITests(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(name="AI User", email="ai@example.com", password="A-strong-password-2026")
-        Integration.objects.create(user=self.user, provider=Integration.Provider.GITHUB, connected_at=timezone.now())
-        Integration.objects.create(user=self.user, provider=Integration.Provider.LINKEDIN, connected_at=timezone.now())
         self.client.force_authenticate(self.user)
 
     def test_generate_returns_local_content(self):
-        response = self.client.post("/api/ai/generate", {"mode": "idea", "source_content": "Migré una API a Django REST Framework.", "tone": "technical", "length": "medium", "emoji_count": 1, "post_type": "story", "call_to_action": "comment"}, format="json")
+        response = self.client.post(
+            "/api/ai/generate",
+            {
+                "mode": "idea",
+                "source_content": "Migré una API a Django REST Framework.",
+                "tone": "technical",
+                "length": "medium",
+                "emoji_count": 1,
+                "post_type": "story",
+                "call_to_action": "comment",
+            },
+            format="json",
+        )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("content", response.data)
         self.assertIn("Django REST Framework", response.data["content"])
+
+    @override_settings(GEMINI_API_KEY="gemini-test-key", GEMINI_MODEL="gemini-test-model")
+    def test_generate_uses_gemini_when_available(self):
+        class FakeResponse:
+            def __init__(self, payload):
+                self.payload = payload
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, tb):
+                return False
+
+            def read(self):
+                return json.dumps(self.payload).encode("utf-8")
+
+        payload = {
+            "candidates": [
+                {
+                    "content": {
+                        "parts": [
+                            {
+                                "text": "Gemini listo para publicar.",
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+
+        with patch("apps.insights.gemini.urlopen", return_value=FakeResponse(payload)):
+            response = self.client.post(
+                "/api/ai/generate",
+                {
+                    "mode": "idea",
+                    "source_content": "Migré una API a Django REST Framework.",
+                    "tone": "technical",
+                    "length": "medium",
+                    "emoji_count": 1,
+                    "post_type": "story",
+                    "call_to_action": "comment",
+                },
+                format="json",
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["content"], "Gemini listo para publicar.")
 
 
 @override_settings(
     SECURE_SSL_REDIRECT=False,
     GITHUB_CLIENT_ID="github-client-id",
     GITHUB_CLIENT_SECRET="github-client-secret",
-    LINKEDIN_CLIENT_ID="linkedin-client-id",
-    LINKEDIN_CLIENT_SECRET="linkedin-client-secret",
 )
 class OAuthTests(APITestCase):
     def setUp(self):

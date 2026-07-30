@@ -10,22 +10,28 @@ Para ejecutar Django fuera de Docker, levantá primero PostgreSQL con `docker co
 
 La API está disponible en `http://localhost:8000/api` y su documentación en `/api/docs/`.
 
-## OAuth de GitHub y LinkedIn
+## OAuth de GitHub
 
-Para que funcionen los botones de conexión y la lectura de repositorios, definí estas variables en `.env`:
+Para que funcione la conexión con GitHub y la lectura de repositorios, definí estas variables en `.env`:
 
 - `GITHUB_CLIENT_ID`
 - `GITHUB_CLIENT_SECRET`
-- `LINKEDIN_CLIENT_ID`
-- `LINKEDIN_CLIENT_SECRET`
 - `FRONTEND_URL`
 
-Registrá también estos callback URLs en cada app de OAuth:
+Registrá también este callback URL en la app de OAuth:
 
 - `http://localhost:8000/api/auth/github/callback`
-- `http://localhost:8000/api/auth/linkedin/callback`
 
-GitHub usa el token guardado para listar repositorios y commits. LinkedIn usa el token para dejar la cuenta conectada y habilitar el flujo de publicación.
+GitHub usa el token guardado para listar repositorios y commits.
+
+## IA con Gemini
+
+Para generar y mejorar publicaciones con IA, definí estas variables en `.env`:
+
+- `GEMINI_API_KEY`
+- `GEMINI_MODEL` opcional, por defecto `gemini-3.5-flash`
+
+Si la clave está presente, `POST /api/ai/generate` y `POST /api/ai/improve` usan Gemini. Si no, el backend cae a un generador local de respaldo para no romper el flujo.
 
 ## Deploy en Render
 
@@ -39,7 +45,5 @@ Si desplegás el backend en Render, definí al menos estas variables:
 - `CSRF_TRUSTED_ORIGINS` con la URL pública del frontend
 - `GITHUB_CLIENT_ID`
 - `GITHUB_CLIENT_SECRET`
-- `LINKEDIN_CLIENT_ID`
-- `LINKEDIN_CLIENT_SECRET`
 
 El contenedor ya arranca con `gunicorn`, así que Render no debería apagarlo por falta de comando de inicio.
