@@ -15,8 +15,8 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:3000")
 GITHUB_CLIENT_ID = env("GITHUB_CLIENT_ID", default="")
 GITHUB_CLIENT_SECRET = env("GITHUB_CLIENT_SECRET", default="")
-LINKEDIN_CLIENT_ID = env("LINKEDIN_CLIENT_ID", default="")
-LINKEDIN_CLIENT_SECRET = env("LINKEDIN_CLIENT_SECRET", default="")
+GEMINI_API_KEY = env("GEMINI_API_KEY", default="")
+GEMINI_MODEL = env("GEMINI_MODEL", default="gemini-3.5-flash")
 
 INSTALLED_APPS = [
     "django.contrib.admin",

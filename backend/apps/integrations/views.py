@@ -47,13 +47,6 @@ def _get_provider_config(provider: str) -> dict[str, str | list[str]]:
             "commits_url": "https://api.github.com/repos/{repository}/commits",
             "scopes": ["read:user", "user:email", "repo"],
         }
-    if provider == Integration.Provider.LINKEDIN:
-        return {
-            "authorize_url": "https://www.linkedin.com/oauth/v2/authorization",
-            "token_url": "https://www.linkedin.com/oauth/v2/accessToken",
-            "profile_url": "https://api.linkedin.com/v2/me",
-            "scopes": ["r_liteprofile", "w_member_social"],
-        }
     raise OAuthFlowError("Proveedor OAuth no soportado.")
 
 
@@ -98,8 +91,6 @@ def _exchange_code(provider: str, code: str, redirect_uri: str) -> dict:
         "client_secret": client_secret,
         "redirect_uri": redirect_uri,
     }
-    if provider == Integration.Provider.LINKEDIN:
-        payload["grant_type"] = "authorization_code"
 
     request = Request(
         config["token_url"],
@@ -125,11 +116,6 @@ def _store_integration(user, provider: str, token_data: dict) -> Integration:
     if provider == Integration.Provider.GITHUB and access_token:
         profile = _fetch_json(_get_provider_config(provider)["profile_url"], access_token)
         username = profile.get("login", "") or profile.get("name", "")
-    elif provider == Integration.Provider.LINKEDIN and access_token:
-        profile = _fetch_json(_get_provider_config(provider)["profile_url"], access_token)
-        first_name = profile.get("localizedFirstName", "")
-        last_name = profile.get("localizedLastName", "")
-        username = " ".join(part for part in [first_name, last_name] if part).strip()
 
     integration, _ = Integration.objects.update_or_create(
         user=user,
@@ -189,17 +175,11 @@ class OAuthStartView(generics.GenericAPIView):
         }
         if not params["client_id"]:
             raise OAuthConfigurationError()
-        if self.provider == Integration.Provider.LINKEDIN:
-            params["prompt"] = "consent"
         return redirect(f'{config["authorize_url"]}?{urlencode(params)}')
 
 
 class GitHubOAuthStartView(OAuthStartView):
     provider = "github"
-
-
-class LinkedInOAuthStartView(OAuthStartView):
-    provider = "linkedin"
 
 
 class OAuthCallbackView(generics.GenericAPIView):
@@ -233,10 +213,6 @@ class OAuthCallbackView(generics.GenericAPIView):
 
 class GitHubOAuthCallbackView(OAuthCallbackView):
     provider = "github"
-
-
-class LinkedInOAuthCallbackView(OAuthCallbackView):
-    provider = "linkedin"
 
 
 class GitHubRepositoriesView(generics.GenericAPIView):

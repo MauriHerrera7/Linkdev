@@ -33,7 +33,7 @@ export default function LoginPage() {
       const auth = await signIn(formData.email.trim(), formData.password);
       saveSession(auth.access, auth.refresh);
       toast.success("¡Sesión iniciada!");
-      router.push(auth.user.onboarding_completed ? "/dashboard" : "/onboarding");
+      router.push(auth.user.onboarding_completed ? "/generate" : "/onboarding");
     } catch (error) {
       toast.error(getApiError(error));
     } finally {

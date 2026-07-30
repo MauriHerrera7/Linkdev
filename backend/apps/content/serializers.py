@@ -22,11 +22,3 @@ class PostSerializer(serializers.ModelSerializer):
         if "scheduled_at" in validated_data and instance.status == Post.Status.DRAFT and "status" not in validated_data:
             validated_data["status"] = Post.Status.SCHEDULED
         return super().update(instance, validated_data)
-
-
-class CalendarEventSerializer(serializers.ModelSerializer):
-    post_id = serializers.UUIDField(source="id")
-
-    class Meta:
-        model = Post
-        fields = ("id", "post_id", "title", "content", "status", "scheduled_at")

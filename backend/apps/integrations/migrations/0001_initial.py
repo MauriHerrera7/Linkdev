@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name='Integration',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('provider', models.CharField(choices=[('github', 'GitHub'), ('linkedin', 'LinkedIn')], max_length=20)),
+                ('provider', models.CharField(choices=[('github', 'GitHub')], max_length=20)),
                 ('username', models.CharField(blank=True, max_length=255)),
                 ('connected_at', models.DateTimeField(blank=True, null=True)),
                 ('access_token', models.TextField(blank=True)),

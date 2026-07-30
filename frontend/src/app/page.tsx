@@ -6,10 +6,8 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowRight,
-  BarChart3,
-  Calendar,
   GitBranch,
-  Link2,
+  Lightbulb,
   PenLine,
   Sparkles,
   Zap,
@@ -37,31 +35,31 @@ const benefits = [
   },
   {
     icon: PenLine,
-    title: "7 modos de creación",
-    description: "Desde ideas, GitHub, URLs, proyectos o experiencias laborales — siempre hay contenido.",
+    title: "Generación guiada",
+    description: "Desde ideas, GitHub, URLs, proyectos o experiencias laborales — siempre hay un punto de partida.",
   },
   {
-    icon: Calendar,
-    title: "Calendario inteligente",
-    description: "Programá publicaciones y mantené la constancia sin esfuerzo.",
+    icon: Lightbulb,
+    title: "Ideas accionables",
+    description: "Convertí temas sueltos en publicaciones útiles y listas para editar.",
   },
   {
-    icon: BarChart3,
-    title: "Analytics con IA",
-    description: "Entendé qué funciona y por qué, con explicaciones en lenguaje natural.",
+    icon: GitBranch,
+    title: "GitHub como fuente",
+    description: "Usá repositorios y commits para alimentar publicaciones más concretas.",
   },
 ];
 
 const steps = [
-  { step: "01", title: "Conectá tus fuentes", description: "LinkedIn para publicar y GitHub como fuente opcional." },
+  { step: "01", title: "Conectá tus fuentes", description: "GitHub como fuente opcional y tu idea base como punto de partida." },
   { step: "02", title: "Generá contenido", description: "Elegí un modo, personalizá el tono y dejá que la IA escriba." },
-  { step: "03", title: "Publicá y crecé", description: "Programá, publicá y analizá tu crecimiento profesional." },
+  { step: "03", title: "Guardá y ajustá", description: "Editá el resultado, guardalo y seguí con tu flujo." },
 ];
 
 const faqs = [
   {
-    q: "¿Necesito conectar LinkedIn para usar linkdev?",
-    a: "Sí, LinkedIn es obligatorio para publicar y programar desde la app. Sin esa conexión, podés explorar el contenido pero no enviarlo a tu perfil.",
+    q: "¿Necesito conectar GitHub para usar linkdev?",
+    a: "No. Podés generar contenido con ideas, texto libre o experiencias. GitHub suma contexto si querés usar repositorios como fuente.",
   },
   {
     q: "¿La IA realmente aprende mi estilo de escritura?",
@@ -73,7 +71,7 @@ const faqs = [
   },
   {
     q: "¿Hay plan gratuito?",
-    a: "Sí, el plan Free incluye 5 publicaciones por mes. Los planes Pro y Team ofrecen generación ilimitada y analytics avanzados.",
+    a: "Sí, el plan Free incluye 5 publicaciones por mes. Los planes Pro y Team ofrecen generación ilimitada y más capacidad de trabajo.",
   },
 ];
 
@@ -82,7 +80,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
-      router.replace("/dashboard");
+      router.replace("/generate");
     }
   }, [router]);
 
@@ -124,11 +122,10 @@ export default function LandingPage() {
           <motion.div {...fadeUp}>
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-sm">
               <Zap className="h-4 w-4 text-primary" />
-              Potenciado por GPT-4 y LangChain
+              Potenciado por Gemini
             </div>
             <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl lg:text-7xl">
-              Construí tu marca personal en{" "}
-              <span className="gradient-text">LinkedIn</span> con IA
+              Construí tu marca personal con IA
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground lg:text-xl">
               Transformá tu trabajo diario — commits, proyectos, experiencias — en publicaciones
@@ -216,7 +213,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-6xl px-4 lg:px-8">
           <div className="mb-16 text-center">
             <h2 className="text-3xl font-bold tracking-tight lg:text-4xl">Cómo funciona</h2>
-            <p className="mt-4 text-muted-foreground">De tu código a LinkedIn en 3 pasos.</p>
+            <p className="mt-4 text-muted-foreground">De tu código a una publicación en 3 pasos.</p>
           </div>
           <div className="grid gap-8 lg:grid-cols-3">
             {steps.map((s, i) => (
@@ -247,8 +244,8 @@ export default function LandingPage() {
               <span className="font-medium">GitHub</span>
             </div>
             <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-3">
-              <Link2 className="h-6 w-6 text-[#0A66C2]" />
-              <span className="font-medium">LinkedIn</span>
+              <Sparkles className="h-6 w-6 text-primary" />
+              <span className="font-medium">IA</span>
             </div>
           </div>
         </div>
@@ -276,7 +273,7 @@ export default function LandingPage() {
             Empezá a construir tu marca personal hoy
           </h2>
           <p className="mt-4 text-muted-foreground">
-            Unite a cientos de desarrolladores que ya están creciendo en LinkedIn.
+            Unite a cientos de desarrolladores que ya están publicando con IA.
           </p>
           <Button variant="gradient" size="lg" className="mt-8" asChild>
             <Link href="/register">

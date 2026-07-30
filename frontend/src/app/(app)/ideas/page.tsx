@@ -83,6 +83,7 @@ export default function IdeasPage() {
           <TabsList className="h-auto flex flex-nowrap gap-2 overflow-x-auto pb-2 pr-2 sm:flex-wrap sm:overflow-visible sm:pb-0 sm:pr-0">
             {CATEGORIES.map((cat) => (
               <TabsTrigger key={cat} value={cat} className="text-xs min-w-max">
+                {cat === "all" ? "Todas" : CATEGORY_LABELS[cat]}
               </TabsTrigger>
             ))}
           </TabsList>

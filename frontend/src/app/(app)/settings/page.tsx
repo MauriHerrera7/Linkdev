@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { mockIntegrations, mockUser } from "@/lib/mock-data";
-import { connectGitHub, connectLinkedIn, getIntegrations } from "@/lib/api/endpoints";
+import { connectGitHub, getIntegrations } from "@/lib/api/endpoints";
 import type { Integration } from "@/lib/types";
 
 const tabs = [
@@ -39,15 +39,14 @@ export default function SettingsPage() {
     const status = searchParams.get("status");
     if (!integrationStatus || !status) return;
     if (status === "connected") {
-      toast.success(`${integrationStatus === "github" ? "GitHub" : "LinkedIn"} conectado correctamente.`);
+      toast.success(`${integrationStatus === "github" ? "GitHub" : "Integración"} conectado correctamente.`);
     } else if (status === "error") {
-      toast.error(`No pudimos conectar ${integrationStatus === "github" ? "GitHub" : "LinkedIn"}.`);
+      toast.error(`No pudimos conectar ${integrationStatus === "github" ? "GitHub" : "la integración"}.`);
     }
     router.replace("/settings");
   }, [router]);
 
   const displayedIntegrations = integrations.length ? integrations : mockIntegrations;
-  const linkedInIntegration = displayedIntegrations.find((integration) => integration.provider === "linkedin");
   const githubIntegration = displayedIntegrations.find((integration) => integration.provider === "github");
 
   return (
@@ -121,28 +120,28 @@ export default function SettingsPage() {
                   <div>
                     <p className="font-medium">Conexiones de cuenta</p>
                     <p className="text-sm text-muted-foreground">
-                      LinkedIn es obligatorio para publicar; GitHub es opcional para sumar fuentes.
+                      GitHub suma contexto desde tus repos y commits para generar mejores publicaciones.
                     </p>
                   </div>
-                  {!linkedInIntegration?.connected && <Badge variant="destructive">LinkedIn requerido</Badge>}
+                  {!githubIntegration?.connected && <Badge variant="destructive">GitHub requerido</Badge>}
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex flex-col gap-3 rounded-lg border border-border p-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <p className="font-medium">LinkedIn</p>
+                      <p className="font-medium">GitHub</p>
                       <p className="text-sm text-muted-foreground">
-                        {linkedInIntegration?.connected
-                          ? `Conectado como ${linkedInIntegration.username}`
-                          : "Conectá tu cuenta para habilitar publicación y programación."}
+                        {githubIntegration?.connected
+                          ? `Conectado como ${githubIntegration.username}`
+                          : "Conectá tu cuenta para habilitar repositorios y commits como fuente."}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <Badge variant={linkedInIntegration?.connected ? "secondary" : "outline"}>
-                        {linkedInIntegration?.connected ? "Activo" : "Pendiente"}
+                      <Badge variant={githubIntegration?.connected ? "secondary" : "outline"}>
+                        {githubIntegration?.connected ? "Activo" : "Pendiente"}
                       </Badge>
-                      {!linkedInIntegration?.connected && (
-                        <Button size="sm" onClick={() => connectLinkedIn()}>
+                      {!githubIntegration?.connected && (
+                        <Button size="sm" onClick={() => connectGitHub()}>
                           Conectar
                         </Button>
                       )}
@@ -189,13 +188,13 @@ export default function SettingsPage() {
                 <ShieldCheck className="h-5 w-5 text-primary" />
                 Integraciones
               </CardTitle>
-              <CardDescription>Revisá el estado de tus conexiones y asegurate de tener LinkedIn activo.</CardDescription>
+              <CardDescription>Revisá el estado de tus conexiones y conectá GitHub si querés sumar repositorios como fuente.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {!linkedInIntegration?.connected && (
+              {!githubIntegration?.connected && (
                 <div className="flex items-center gap-2 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-700 dark:text-amber-300">
                   <AlertCircle className="h-5 w-5 shrink-0" />
-                  LinkedIn debe estar conectado para publicar y programar desde la app.
+                  Conectá GitHub para importar repositorios y commits como fuente.
                 </div>
               )}
               {displayedIntegrations.map((integration) => (

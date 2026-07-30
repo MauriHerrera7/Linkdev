@@ -1,12 +1,4 @@
-import type {
-  AnalyticsOverview,
-  CalendarEvent,
-  DashboardStats,
-  Idea,
-  Integration,
-  Post,
-  User,
-} from "@/lib/types";
+import type { Idea, Integration, Post, User } from "@/lib/types";
 
 export const mockUser: User = {
   id: "1",
@@ -21,15 +13,6 @@ export const mockUser: User = {
   publish_frequency: "3x_week",
   onboarding_completed: true,
   created_at: "2025-01-15T10:00:00Z",
-};
-
-export const mockStats: DashboardStats = {
-  total_posts: 47,
-  scheduled_posts: 5,
-  total_impressions: 128400,
-  engagement_rate: 4.2,
-  followers_growth: 342,
-  streak_days: 12,
 };
 
 export const mockIdeas: Idea[] = [
@@ -90,9 +73,8 @@ export const mockPosts: Post[] = [
   {
     id: "2",
     content:
-      "🚀 Acabo de lanzar linkdev — una plataforma que transforma tu trabajo diario en contenido de LinkedIn.\n\nEl problema: sabemos que LinkedIn genera oportunidades, pero no tenemos tiempo ni ideas.\n\nLa solución: IA que aprende tu estilo y genera publicaciones auténticas.",
-    status: "scheduled",
-    scheduled_at: "2025-07-18T10:00:00Z",
+      "🚀 Acabo de lanzar linkdev — una plataforma que transforma tu trabajo diario en contenido profesional.\n\nEl problema: sabemos que publicar con constancia genera oportunidades, pero no siempre tenemos tiempo ni ideas.\n\nLa solución: IA que aprende tu estilo y genera publicaciones auténticas.",
+    status: "draft",
     created_at: "2025-07-16T08:00:00Z",
     updated_at: "2025-07-16T08:00:00Z",
     tone: "inspirational",
@@ -110,43 +92,8 @@ export const mockPosts: Post[] = [
   },
 ];
 
-export const mockAnalytics: AnalyticsOverview = {
-  impressions: Array.from({ length: 30 }, (_, i) => ({
-    date: new Date(Date.now() - (29 - i) * 86400000).toISOString().split("T")[0],
-    value: Math.floor(Math.random() * 3000) + 1000,
-  })),
-  likes: Array.from({ length: 30 }, (_, i) => ({
-    date: new Date(Date.now() - (29 - i) * 86400000).toISOString().split("T")[0],
-    value: Math.floor(Math.random() * 80) + 20,
-  })),
-  comments: Array.from({ length: 30 }, (_, i) => ({
-    date: new Date(Date.now() - (29 - i) * 86400000).toISOString().split("T")[0],
-    value: Math.floor(Math.random() * 20) + 5,
-  })),
-  followers: Array.from({ length: 30 }, (_, i) => ({
-    date: new Date(Date.now() - (29 - i) * 86400000).toISOString().split("T")[0],
-    value: 1200 + i * 12 + Math.floor(Math.random() * 10),
-  })),
-  engagement_rate: 4.2,
-  top_posts: mockPosts.filter((p) => p.status === "published"),
-  ai_insight:
-    "Tu publicación sobre Django REST Framework tuvo un 3.2x más engagement que el promedio. Los posts técnicos con listas numeradas y preguntas al final generan 40% más comentarios. Publicar los martes entre 10-11 AM maximiza tu alcance según tu audiencia.",
-};
-
-export const mockCalendarEvents: CalendarEvent[] = mockPosts
-  .filter((p) => p.scheduled_at || p.published_at)
-  .map((p) => ({
-    id: p.id,
-    post_id: p.id,
-    title: p.content.slice(0, 50) + "...",
-    content: p.content,
-    status: p.status,
-    scheduled_at: p.scheduled_at ?? p.published_at!,
-  }));
-
 export const mockIntegrations: Integration[] = [
   { provider: "github", connected: true, username: "mauricio-herrera", connected_at: "2025-06-01T00:00:00Z" },
-  { provider: "linkedin", connected: false },
 ];
 
 export const CATEGORY_LABELS: Record<string, string> = {

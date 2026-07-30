@@ -73,10 +73,10 @@ export default function OnboardingPage() {
     try {
       await completeOnboarding(data);
       toast.success("¡Perfil configurado! Bienvenido a linkdev.");
-      router.push("/dashboard");
+      router.push("/generate");
     } catch (error) {
       toast.error(getApiError(error));
-      router.push("/dashboard");
+      router.push("/generate");
     } finally {
       setLoading(false);
     }

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Briefcase, GitBranch, Globe, Lightbulb, Link2, MessageSquare, PenLine, Sparkles, Wrench } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/layout/app-shell";
-import { LinkedInPreview } from "@/components/generate/linkedin-preview";
+import { PostPreview } from "@/components/generate/post-preview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -15,12 +15,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import {
+  createPost,
   connectGitHub,
   generatePost,
   getGitHubCommits,
   getGitHubRepos,
   getIntegrations,
 } from "@/lib/api/endpoints";
+import { getApiError } from "@/lib/api/client";
 import type {
   GeneratePostRequest,
   GitHubCommit,
@@ -66,15 +68,12 @@ export default function GeneratePage() {
   const [selectedRepository, setSelectedRepository] = useState<GitHubRepository | null>(null);
   const [commits, setCommits] = useState<GitHubCommit[]>([]);
   const [repositoriesLoading, setRepositoriesLoading] = useState(false);
+  const [savingDraft, setSavingDraft] = useState(false);
 
   useEffect(() => {
     getIntegrations().then(setIntegrations).catch(() => setIntegrations([]));
   }, []);
 
-  const linkedInConnected = useMemo(
-    () => integrations.some((integration) => integration.provider === "linkedin" && integration.connected),
-    [integrations]
-  );
   const githubConnected = useMemo(
     () => integrations.some((integration) => integration.provider === "github" && integration.connected),
     [integrations]
@@ -137,12 +136,8 @@ export default function GeneratePage() {
   }, [githubActive, selectedRepository]);
 
   async function handleGenerate() {
-    if (!linkedInConnected) {
-      toast.error("Conectá LinkedIn desde Configuración antes de generar o publicar.");
-      return;
-    }
     if (!sourceContent.trim()) {
-      toast.error("Ingresá contenido para generar la publicación");
+      toast.error("Ingresá contenido para generar la publicación.");
       return;
     }
     setLoading(true);
@@ -164,6 +159,29 @@ export default function GeneratePage() {
       toast.info("Modo demo: mostrando contenido de ejemplo");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleSaveDraft() {
+    if (!generatedContent.trim()) {
+      toast.error("Generá una publicación antes de guardarla como borrador.");
+      return;
+    }
+
+    setSavingDraft(true);
+    try {
+      await createPost({
+        content: generatedContent.trim(),
+        status: "draft",
+        tone,
+        post_type: postType,
+        source: (mode === "github" ? displayedSelectedRepository?.full_name ?? "github" : mode).slice(0, 50),
+      });
+      toast.success("Borrador guardado");
+    } catch (error) {
+      toast.error(getApiError(error));
+    } finally {
+      setSavingDraft(false);
     }
   }
 
@@ -369,14 +387,14 @@ export default function GeneratePage() {
             </CardContent>
           </Card>
 
-          <Button variant="gradient" size="lg" className="w-full" onClick={handleGenerate} loading={loading} disabled={!linkedInConnected}>
+          <Button variant="gradient" size="lg" className="w-full" onClick={handleGenerate} loading={loading}>
             <Sparkles className="mr-2 h-4 w-4" />
             Generar publicación
           </Button>
         </div>
 
         <div className="space-y-4 lg:col-span-2">
-          <LinkedInPreview content={generatedContent} />
+          <PostPreview content={generatedContent} />
 
           {generatedContent && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
@@ -404,11 +422,8 @@ export default function GeneratePage() {
               </Tabs>
 
               <div className="flex gap-2">
-                <Button variant="outline" className="flex-1">
+                <Button variant="outline" className="flex-1" onClick={handleSaveDraft} loading={savingDraft} disabled={!generatedContent.trim() || savingDraft}>
                   Guardar borrador
-                </Button>
-                <Button variant="gradient" className="flex-1" disabled={!linkedInConnected}>
-                  Programar
                 </Button>
               </div>
             </motion.div>
@@ -424,6 +439,5 @@ export default function GeneratePage() {
  * POST /api/ai/generate → GeneratePostRequest → GeneratePostResponse
  * POST /api/ai/improve → { content, instruction } → { content }
  * POST /api/posts → { content, status: "draft" } → Post
- * POST /api/linkedin/schedule → { post_id, scheduled_at }
  * GET  /api/github/repositories → Repository[]
  */

@@ -7,7 +7,7 @@ El frontend Next.js consume la API REST Django en `/api`. Django REST Framework 
 | `accounts` | Registro, login, refresh JWT y onboarding. |
 | `content` | Posts, calendario y dashboard. |
 | `ideas` | Ideas persistidas y generador local. |
-| `insights` | Generación/mejora local y analytics. |
+| `insights` | Generación/mejora con Gemini y analytics. |
 | `integrations` | Estado e inicio OAuth. |
 | `common` | Errores API consistentes. |
 
@@ -19,4 +19,4 @@ flowchart LR
   API --> Schema[OpenAPI / Swagger]
 ```
 
-La IA actual es local y determinista. LinkedIn, sincronización externa, Redis y tareas en cola no están implementados; no deben asumirse como capacidades operativas.
+La IA usa Gemini cuando `GEMINI_API_KEY` está configurada y cae a un fallback local si no hay clave. La sincronización externa, Redis y las tareas en cola no están implementadas; no deben asumirse como capacidades operativas.

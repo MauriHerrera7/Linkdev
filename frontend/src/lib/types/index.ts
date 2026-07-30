@@ -59,25 +59,6 @@ export interface Idea {
   created_at: string;
 }
 
-export interface DashboardStats {
-  total_posts: number;
-  scheduled_posts: number;
-  total_impressions: number;
-  engagement_rate: number;
-  followers_growth: number;
-  streak_days: number;
-}
-
-export interface AnalyticsOverview {
-  impressions: { date: string; value: number }[];
-  likes: { date: string; value: number }[];
-  comments: { date: string; value: number }[];
-  followers: { date: string; value: number }[];
-  engagement_rate: number;
-  top_posts: Post[];
-  ai_insight: string;
-}
-
 export interface GeneratePostRequest {
   mode: "idea" | "project" | "github" | "url" | "free_text" | "conversation" | "experience";
   source_content?: string;
@@ -106,7 +87,7 @@ export interface OnboardingData {
 }
 
 export interface Integration {
-  provider: "github" | "linkedin";
+  provider: "github";
   connected: boolean;
   username?: string;
   connected_at?: string;
@@ -129,15 +110,6 @@ export interface GitHubCommit {
   author: string;
   date: string;
   html_url: string;
-}
-
-export interface CalendarEvent {
-  id: string;
-  post_id: string;
-  title: string;
-  content: string;
-  status: PostStatus;
-  scheduled_at: string;
 }
 
 export interface AuthResponse {

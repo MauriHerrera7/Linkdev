@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from apps.content.models import Post
-from apps.content.serializers import PostSerializer
 
 
 class GeneratePostSerializer(serializers.Serializer):
@@ -17,6 +16,8 @@ class GeneratePostSerializer(serializers.Serializer):
     def validate(self, attrs):
         if attrs["mode"] == "url" and not attrs.get("url") and not attrs.get("source_content"):
             raise serializers.ValidationError("URL requiere una URL o contenido fuente.")
+        if attrs["mode"] == "github" and not attrs.get("repository_id") and not attrs.get("source_content"):
+            raise serializers.ValidationError("GitHub requiere un repositorio o contenido fuente.")
         if attrs["mode"] not in ("url", "github") and not attrs.get("source_content"):
             raise serializers.ValidationError("source_content es obligatorio para este modo.")
         return attrs
@@ -25,17 +26,3 @@ class GeneratePostSerializer(serializers.Serializer):
 class ImprovePostSerializer(serializers.Serializer):
     content = serializers.CharField(max_length=3000)
     instruction = serializers.CharField(max_length=200)
-
-
-class PostIdsSerializer(serializers.Serializer):
-    post_ids = serializers.ListField(child=serializers.UUIDField(), min_length=1, max_length=20)
-
-
-class AnalyticsSerializer(serializers.Serializer):
-    impressions = serializers.ListField()
-    likes = serializers.ListField()
-    comments = serializers.ListField()
-    followers = serializers.ListField()
-    engagement_rate = serializers.FloatField()
-    top_posts = PostSerializer(many=True)
-    ai_insight = serializers.CharField()
