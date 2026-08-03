@@ -204,7 +204,7 @@ export default function GeneratePage() {
                       "flex flex-col items-center gap-2 rounded-lg border border-border bg-card p-3 text-center text-xs font-medium text-[var(--text)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] dark:bg-[var(--surface)] dark:text-[var(--text)]",
                       mode === item.id
                         ? "border-[var(--brand-900)] bg-[var(--brand-100)] text-[var(--brand-900)] shadow-sm dark:border-[var(--brand-300)] dark:bg-white/10 dark:text-white"
-                        : "hover:border-[var(--brand-900)] hover:bg-[var(--brand-100)] hover:text-[var(--brand-900)] dark:hover:border-[var(--brand-300)] dark:hover:bg-white/10"
+                        : "hover:border-[var(--brand-900)] hover:bg-[var(--brand-900)] hover:text-white hover:shadow-sm hover:shadow-[rgba(10,60,110,0.18)] dark:hover:border-[var(--brand-600)] dark:hover:bg-[var(--brand-600)] dark:hover:text-white"
                     )}
                     aria-pressed={mode === item.id}
                   >
@@ -263,7 +263,7 @@ export default function GeneratePage() {
                               className={`rounded-lg border p-3 text-left text-sm transition-all ${
                                 selectedRepository?.id === repository.id
                                   ? "border-[var(--brand-900)] bg-[var(--brand-100)] text-[var(--brand-900)] dark:border-[var(--brand-300)] dark:bg-white/10 dark:text-white"
-                                  : "border-border hover:border-[var(--brand-900)] hover:bg-[var(--brand-100)] dark:hover:border-[var(--brand-300)] dark:hover:bg-white/10"
+                                  : "border-border hover:border-[var(--brand-900)] hover:bg-[var(--brand-900)] hover:text-white hover:shadow-sm hover:shadow-[rgba(10,60,110,0.18)] dark:hover:border-[var(--brand-600)] dark:hover:bg-[var(--brand-600)] dark:hover:text-white"
                               }`}
                             >
                               <div className="flex items-center justify-between gap-3">

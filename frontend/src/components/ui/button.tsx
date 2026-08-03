@@ -13,12 +13,12 @@ const buttonVariants = cva(
           "bg-[var(--brand-900)] text-white shadow-sm shadow-[rgba(10,60,110,0.18)] hover:bg-[var(--brand-600)] active:scale-[0.98]",
         destructive: "bg-[var(--destructive)] text-white hover:bg-[#e11d48]",
         outline:
-          "border border-black bg-white text-black shadow-sm shadow-[rgba(15,23,42,0.06)] hover:border-[var(--brand-600)] hover:bg-[var(--brand-100)] hover:text-black dark:border-[var(--brand-300)] dark:bg-transparent dark:text-[var(--brand-100)] dark:hover:bg-white/10",
+          "border border-black bg-white text-black shadow-sm shadow-[rgba(15,23,42,0.06)] hover:border-[var(--brand-900)] hover:bg-[var(--brand-900)] hover:text-white hover:shadow-md hover:shadow-[rgba(10,60,110,0.18)] dark:border-[var(--brand-300)] dark:bg-transparent dark:text-[var(--brand-100)] dark:hover:border-[var(--brand-600)] dark:hover:bg-[var(--brand-600)] dark:hover:text-white",
         secondary:
           "bg-[var(--brand-100)] text-[var(--brand-900)] hover:bg-[var(--brand-300)] dark:bg-white/10 dark:text-white dark:hover:bg-white/15",
         ghost:
           "bg-transparent text-[var(--brand-900)] hover:bg-[var(--brand-100)] hover:text-[var(--brand-900)] dark:text-[var(--text)] dark:hover:bg-white/10",
-        link: "text-[var(--brand-900)] underline-offset-4 hover:text-[var(--brand-600)] hover:underline dark:text-[var(--brand-100)] dark:hover:text-white",
+        link: "text-[var(--brand-900)] underline-offset-4 hover:text-[var(--brand-900)] hover:underline dark:text-[var(--brand-100)] dark:hover:text-white",
         gradient:
           "bg-gradient-to-r from-[var(--brand-900)] to-[var(--brand-600)] text-white shadow-lg shadow-[rgba(10,60,110,0.22)] hover:from-[var(--brand-600)] hover:to-[var(--brand-500)] active:scale-[0.98]",
       },

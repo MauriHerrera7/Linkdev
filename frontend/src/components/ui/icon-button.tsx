@@ -15,7 +15,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       type="button"
       aria-label={label}
       className={cn(
-        "inline-flex h-10 w-10 items-center justify-center rounded-full border border-transparent bg-[var(--card)] text-[var(--text-secondary)] transition-all duration-200 hover:border-[var(--brand-300)] hover:bg-[var(--brand-100)] hover:text-[var(--brand-900)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] dark:hover:bg-white/10 dark:hover:text-[var(--text)]",
+        "inline-flex h-10 w-10 items-center justify-center rounded-full border border-transparent bg-[var(--card)] text-[var(--text-secondary)] transition-all duration-200 hover:border-[var(--brand-900)] hover:bg-[var(--brand-900)] hover:text-white hover:shadow-sm hover:shadow-[rgba(10,60,110,0.18)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] dark:hover:border-[var(--brand-600)] dark:hover:bg-[var(--brand-600)] dark:hover:text-white",
         active && "border-[var(--brand-900)] bg-[var(--brand-900)] text-white shadow-sm shadow-[rgba(10,60,110,0.18)] hover:bg-[var(--brand-600)] dark:border-[var(--brand-300)] dark:bg-[var(--brand-600)] dark:hover:bg-[var(--brand-500)]",
         className
       )}
